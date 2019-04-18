@@ -8,8 +8,8 @@
 
 class Cell {
 public:
-    Cell(int, int);
-    Cell(const Cell&);
+    Cell(int x, int y) : x(x), y(y) {};
+    Cell(const Cell& cell) : x(cell.Get_X()),  y(cell.Get_Y()) {};
     Cell(Cell&&) = delete;
 
     int Get_X() const { return x; };
@@ -18,14 +18,15 @@ public:
     void Set_Container(Cell* cell) { if (container == nullptr) container = cell; };
     void Add_Neighbour(Cell*);
 
+    virtual void Find_Path(Cell** starting_positions, int first_array_size, Cell** destination_positions, int second_array_size) {};
+
     // virtual ~Cell();
 private:
     int x;
     int y;
-    int number_of_neighbours = 0;
-
     Cell* container = nullptr;
     Cell** neighbours = nullptr;
+    int number_of_neighbours = 0;
 };
 
 

@@ -10,9 +10,10 @@
 class Game_Map {
 public:
     Game_Map(int**, int, int, Traversal_Type);
-
     Game_Map(const Game_Map&) = delete;
     Game_Map(Game_Map&&) = delete;
+
+    int Get_Cell_Content(int x, int y) { return map[x][y]; }
 
 private:
     int** map;

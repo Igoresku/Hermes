@@ -4,8 +4,8 @@
 
 #include "../include/Zone.h"
 
-int Zone::size;
+const int Zone::size = 8;
 
-Zone::Zone(const Cell& cell) : Cell(cell) {
+void Zone::Find_Path(Cell **starting_positions, int first_array_size, Cell **destination_positions, int second_array_size) {
 
 }

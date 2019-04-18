@@ -9,18 +9,22 @@
 
 class Zone : public Cell {
 private: // meta
-    static int size;
-
-public: // meta
-    static void Set_Size(int size) { Zone::size = size; };
+    // the maximum number of cells which will be categorized under a zone is size^2
+    static const int size;
 
 public:
-    explicit Zone(const Cell&);
+    Zone(int x, int y, int level_of_abstraction) : Cell(x, y), level_of_abstraction(level_of_abstraction) {};
+
+    void Find_Path(Cell** starting_positions, int first_array_size, Cell** destination_positions, int second_array_size) override;
 
     // ~Zone() override;
 private:
-    Cell** contained;
-    Cell*** connections;
+    int level_of_abstraction;
+
+    Cell** contained = nullptr;
+    Cell*** connections = nullptr;
+    int* number_of_connections = nullptr;
+    int number_of_contained = 0;
 };
 
 
