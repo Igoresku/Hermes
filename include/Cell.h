@@ -15,22 +15,26 @@ public:
     int Get_X() const { return x; };
     int Get_Y() const { return y; };
     int Get_Capacity() const { return capacity; };
-
     void Update_Capacity(int new_capacity) { if (new_capacity > capacity) capacity = new_capacity; };
 
+    virtual Cell* Adjacent_East(int i, int j) const { return nullptr; };
+    virtual Cell* Adjacent_South(int i, int j) const { return nullptr; };
     virtual void Set_Container(Cell* cell) { container = cell; };
-    void Add_Neighbour(Cell*);
+    virtual void Add_Neighbour(Cell*);
+    virtual void Add_Connection(Cell*, Cell*) {};
 
     virtual void Find_Path(Cell** starting_positions, int first_array_size, Cell** destination_positions, int second_array_size) {};
 
     // virtual ~Cell();
+protected:
+    Cell** neighbours = nullptr;
+    int number_of_neighbours = 0;
+
 private:
     const int x;
     const int y;
     int capacity;
     Cell* container = nullptr;
-    Cell** neighbours = nullptr;
-    int number_of_neighbours = 0;
 };
 
 #endif //PATH_FINDING_CELL_ABSTRACTION_H

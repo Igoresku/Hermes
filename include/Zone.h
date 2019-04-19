@@ -8,15 +8,16 @@
 #include "Cell.h"
 
 class Zone : public Cell {
-private: // meta
-    // the maximum number of cells which will be categorized under a zone is size^2
-    static const int SIZE;
-
 public:
     Zone(int x, int y, int capacity = 0) : Cell(x, y, capacity) {};
 
     void Find_Path(Cell** starting_positions, int first_array_size, Cell** destination_positions, int second_array_size) override;
+
+    Cell* Adjacent_East(int, int) const override;
+    Cell* Adjacent_South(int, int) const override;
     void Set_Container(Cell*) override;
+    void Add_Neighbour(Cell*) override;
+    void Add_Connection(Cell*, Cell*) override;
     // ~Zone() override;
 private:
     Cell** contained = nullptr;
@@ -24,6 +25,5 @@ private:
     int* number_of_connections = nullptr;
     int number_of_contained = 0;
 };
-
 
 #endif //PATH_FINDING_ZONE_H

@@ -10,7 +10,7 @@
 
 class Map_Abstraction_Master {
 public:
-    explicit Map_Abstraction_Master(int);
+    explicit Map_Abstraction_Master(int, int = 8);
 
     void Create_Abstraction(const Game_Map*&, Traversal_Type&&);
 
@@ -18,6 +18,7 @@ private:
     Cell* map_abstractions[3] = { nullptr, nullptr, nullptr };
     int dimensions;
     int hierarchy_size;
+    int abstraction_size;
 };
 
 
