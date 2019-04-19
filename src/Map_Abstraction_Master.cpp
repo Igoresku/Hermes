@@ -10,7 +10,7 @@ Map_Abstraction_Master::Map_Abstraction_Master(int dimensions, int abstraction_s
         hierarchy_size += 1;
 }
 
-void Map_Abstraction_Master::Create_Abstraction(const Game_Map*& game_map, Traversal_Type&& traversal_type) {
+void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Type&& traversal_type) {
 
     /* First step is creating a matrix of series of abstractions, this will allow me to
      * very neatly create and interweave them by creating the lowest level, and then

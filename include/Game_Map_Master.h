@@ -5,31 +5,35 @@
 #ifndef PATH_FINDING_GAME_MAP_MASTER_H
 #define PATH_FINDING_GAME_MAP_MASTER_H
 
-#include <pthread.h>
 #include <fstream>
 #include "Runnable.h"
 #include "Game_Map.h"
 #include "Agent.h"
+#include "Map_Abstraction_Master.h"
 
 class Game_Map_Master : public Runnable {
 public:
-    explicit Game_Map_Master(std::string& file_name) : file_name(file_name) {};
-
+    static Game_Map_Master* Factory(std::string);
+public:
     void Add_Agent(int, Traversal_Type, int, int);
     void List_All_Agents();
 
     ~Game_Map_Master() override = default;
 protected:
+    Game_Map_Master(int, int, int, int**);
+
     void* run() override;
 
 private:
-    int dimensions = 0;
-    int max_agent_size = 0;
-    std::string file_name;
-
-    Game_Map* maps[2] = { nullptr, nullptr };
+    int dimensions;
+    int abstraction_size;
+    int max_agent_size;
     Agent** agents = nullptr;
     int number_of_agents = 0;
+
+    int** raw_map;
+    Game_Map* maps[2] = { nullptr, nullptr };
+    Map_Abstraction_Master* map_abstraction_master;
 }; // class Game_Map_Master
 
 // trenutno provera postojanja fajla i njegovog formata obavlja u konstruktoru, sto semanticki nije ispravno

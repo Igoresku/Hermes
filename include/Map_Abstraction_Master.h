@@ -12,7 +12,7 @@ class Map_Abstraction_Master {
 public:
     explicit Map_Abstraction_Master(int, int = 8);
 
-    void Create_Abstraction(const Game_Map*&, Traversal_Type&&);
+    void Create_Abstraction(Game_Map*, Traversal_Type&&);
 
 private:
     Cell* map_abstractions[2] = { nullptr, nullptr };
