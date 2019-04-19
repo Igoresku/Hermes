@@ -27,7 +27,7 @@ private:
     int max_agent_size = 0;
     std::string file_name;
 
-    Game_Map* maps[3] = { nullptr, nullptr, nullptr };
+    Game_Map* maps[2] = { nullptr, nullptr };
     Agent** agents = nullptr;
     int number_of_agents = 0;
 }; // class Game_Map_Master

@@ -15,7 +15,7 @@ public:
     void Create_Abstraction(const Game_Map*&, Traversal_Type&&);
 
 private:
-    Cell* map_abstractions[3] = { nullptr, nullptr, nullptr };
+    Cell* map_abstractions[2] = { nullptr, nullptr };
     int dimensions;
     int hierarchy_size;
     int abstraction_size;

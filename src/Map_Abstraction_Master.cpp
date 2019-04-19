@@ -88,7 +88,7 @@ void Map_Abstraction_Master::Create_Abstraction(const Game_Map*& game_map, Trave
                                     current_map_abstractions[level][m][n-1], connection);
                             current_map_abstractions[level][m][n-1]->Add_Connection(
                                     current_map_abstractions[level][m][n],
-                                    current_map_abstractions[level-1][previous_m][previous_n]));
+                                    current_map_abstractions[level-1][previous_m][previous_n]);
                         }
 
                     previous_m = m;

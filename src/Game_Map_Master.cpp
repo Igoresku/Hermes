@@ -41,9 +41,8 @@ void* Game_Map_Master::run() {
         } // for : j
     } // for : i
 
-    maps[0] = new Game_Map(map, dimensions, max_agent_size,  Traversal_Type::Walking);
+    maps[0] = new Game_Map(map, dimensions, max_agent_size, Traversal_Type::Walking);
     maps[1] = new Game_Map(map, dimensions, max_agent_size, Traversal_Type::Swimming);
-    maps[2] = new Game_Map(map, dimensions, max_agent_size, Traversal_Type::Flying);
 
     for (int i = 0; i < dimensions; )
         delete[] map[i++];

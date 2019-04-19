@@ -7,8 +7,8 @@
 
 #include <string>
 
-enum class Traversal_Type : int {Walking = 0, Swimming = 1, Flying = 2};
+enum class Traversal_Type : int { Walking = 0, Swimming = 1 };
 
-std::string Print_Traversal_Type(const Traversal_Type&s);
+std::string Print_Traversal_Type(Traversal_Type);
 
 #endif //PATH_FINDING_TRAVERSAL_TYPE_H
