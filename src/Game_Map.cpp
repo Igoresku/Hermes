@@ -41,7 +41,7 @@ Game_Map::Game_Map(int** raw_map, int dimensions, int max_agent_size, Traversal_
                 } // for : agent_size
             } else {
                 // terrain is set to impassable for this traversal type
-                this->map[i][j] = -1;
+                this->map[i][j] = 0;
             }// if : map[i][j]
 
         } // for : j

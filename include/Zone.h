@@ -10,17 +10,15 @@
 class Zone : public Cell {
 private: // meta
     // the maximum number of cells which will be categorized under a zone is size^2
-    static const int size;
+    static const int SIZE;
 
 public:
-    Zone(int x, int y, int level_of_abstraction) : Cell(x, y), level_of_abstraction(level_of_abstraction) {};
+    Zone(int x, int y, int capacity = 0) : Cell(x, y, capacity) {};
 
     void Find_Path(Cell** starting_positions, int first_array_size, Cell** destination_positions, int second_array_size) override;
-
+    void Set_Container(Cell*) override;
     // ~Zone() override;
 private:
-    int level_of_abstraction;
-
     Cell** contained = nullptr;
     Cell*** connections = nullptr;
     int* number_of_connections = nullptr;

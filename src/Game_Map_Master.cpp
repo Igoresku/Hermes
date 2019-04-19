@@ -56,9 +56,10 @@ void Game_Map_Master::Add_Agent(int size, Traversal_Type traversal_type, int x, 
 
     if (number_of_agents % 10 == 0) {
         auto replace_array = new Agent*[number_of_agents + 10];
-        for (int i = 0; i < number_of_agents + 10; i++)
-            replace_array[i] = (i < number_of_agents)? agents[i]: nullptr;
-
+        for (int i = 0; i < number_of_agents + 10; i++) {
+            replace_array[i] = (i < number_of_agents) ? agents[i] : nullptr;
+            agents[i] = nullptr;
+        }
         delete[] agents;
         agents = replace_array;
     }
