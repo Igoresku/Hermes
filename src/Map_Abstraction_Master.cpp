@@ -34,11 +34,14 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
      * as necessary. Also as cells and zones are created they are linked to those created
      * previously and who might be concerned for adjacency's sake */
     auto first_level_abstraction = current_map_abstractions[hierarchy_size-1];
+    int max_capacity = 0;
     for (int i = 0; i < dimensions; i++) {
         for (int j = 0; j < dimensions; j++) {
 
             if (game_map->Cell_Passable(i, j)) {
                 int cell_capacity = game_map->Get_Cell_Content(i, j);
+                if (cell_capacity > max_capacity)
+                    max_capacity = cell_capacity;
                 first_level_abstraction[i][j] = new Cell(i, j, cell_capacity);
 
                 // neighbouring west and north cells are connected, if such cells exist
@@ -103,5 +106,5 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
         } // for : j
     } // for : i
 
-    // map_abstractions[(int)traversal_type] = new Zone(0, 0);
+    map_abstractions[(int)traversal_type] = new Map_Abstraction(0, 0, max_capacity);
 }

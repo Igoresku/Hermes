@@ -1,0 +1,15 @@
+//
+// Created by Igor Duric on 4/20/19.
+//
+
+#include "../include/Map_Abstraction.h"
+
+Map_Abstraction::Map_Abstraction(int x, int y, int capacity) : Zone(x, y, capacity) {
+
+}
+
+bool Map_Abstraction::Find_Path(Cell **starting_positions, int first_array_size, Cell **destination_positions,
+                                int second_array_size) {
+
+}
+

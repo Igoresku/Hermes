@@ -11,7 +11,7 @@ class Zone : public Cell {
 public:
     Zone(int x, int y, int capacity = 0) : Cell(x, y, capacity) {};
 
-    void Find_Path(Cell** starting_positions, int first_array_size, Cell** destination_positions, int second_array_size) override;
+    bool Find_Path(Cell**, int, Cell**, int) override;
 
     Cell* Adjacent_East(int, int) const override;
     Cell* Adjacent_South(int, int) const override;

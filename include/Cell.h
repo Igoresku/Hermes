@@ -23,7 +23,7 @@ public:
     virtual void Add_Neighbour(Cell*);
     virtual void Add_Connection(Cell*, Cell*) {};
 
-    virtual void Find_Path(Cell** starting_positions, int first_array_size, Cell** destination_positions, int second_array_size) {};
+    virtual bool Find_Path(Cell**, int, Cell**, int) { return true; };
 
     // virtual ~Cell();
 protected:

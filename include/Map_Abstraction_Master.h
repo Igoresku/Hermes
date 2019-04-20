@@ -5,7 +5,7 @@
 #ifndef PATH_FINDING_MAP_ABSTRACTION_MASTER_H
 #define PATH_FINDING_MAP_ABSTRACTION_MASTER_H
 
-#include "Zone.h"
+#include "Map_Abstraction.h"
 #include "Game_Map.h"
 
 class Map_Abstraction_Master {

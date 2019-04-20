@@ -12,6 +12,7 @@ class Invalid_Parameters: public std::exception {
 public:
     Invalid_Parameters(int, int);
     explicit Invalid_Parameters(int);
+    explicit Invalid_Parameters(float);
 
     const char* what() const noexcept override {
         return message;

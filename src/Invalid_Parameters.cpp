@@ -17,5 +17,12 @@ Invalid_Parameters::Invalid_Parameters(int max_agent_size) {
     message = new char[100]; message[0] = '\0';
     strcat(message, "Invalid parameter (max agent size: ");
     strcat(message, std::to_string(max_agent_size).c_str());
-    strcat(message, " isn't in range [1,3])\n");
+    strcat(message, " isn't in range [1, 5])\n");
+}
+
+Invalid_Parameters::Invalid_Parameters(float obstacle_factor) {
+    message = new char[100]; message[0] = '\0';
+    strcat(message, "Invalid parameter (obstacle factor: ");
+    strcat(message, std::to_string(obstacle_factor).c_str());
+    strcat(message, " isn't in range [0.0, 100.0])\n");
 }
