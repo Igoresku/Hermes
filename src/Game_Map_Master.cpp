@@ -7,10 +7,8 @@
 Game_Map_Master* Game_Map_Master::Factory(std::string file_name) {
     std::ifstream input_File;
     input_File.open(file_name);
-    if (!input_File) { // to be replaced by throwing an exception
-        std::cout << "Unsuccessful read: File does not exist\n";
-        return nullptr;
-    }
+    if (!input_File)
+        throw Nonexistent_File(file_name);
 
     int dimensions, abstraction_size, max_agent_size;
     input_File >> dimensions;
@@ -20,15 +18,9 @@ Game_Map_Master* Game_Map_Master::Factory(std::string file_name) {
     for (int i = 0; i < dimensions; )
         raw_map[i++] = new int[dimensions];
 
-    int a = abstraction_size;
-    for (; a < dimensions; ) a = a * a;
 
-    if (a != dimensions) {
-        // to be replaced by throwing an exception
-        std::cout << "Unsuccessful read: File is in invalid format (this abstraction size: " << abstraction_size
-        << " cannot be paired with these dimensions: " << dimensions << ")\n";
-        return nullptr;
-    }
+    if (dimensions % abstraction_size)
+        throw Invalid_File_Format(abstraction_size, dimensions);
 
     char read_data;
     for (int i = 0; i < dimensions; i++) {
@@ -55,9 +47,7 @@ Game_Map_Master* Game_Map_Master::Factory(std::string file_name) {
                         delete raw_map[k++];
                     delete[] raw_map;
 
-                    // to be replaced by throwing an exception
-                    std::cout << "Unsuccessful read: File is in invalid format (unknown symbol: " << read_data << ")\n";
-                    return nullptr;
+                    throw Invalid_File_Format(read_data);
                 }
             } // switch : read_data
 

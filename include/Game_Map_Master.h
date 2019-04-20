@@ -10,10 +10,12 @@
 #include "Game_Map.h"
 #include "Agent.h"
 #include "Map_Abstraction_Master.h"
+#include "Nonexistent_File.h"
+#include "Invalid_File_Format.h"
 
 class Game_Map_Master : public Runnable {
-public:
-    static Game_Map_Master* Factory(std::string);
+public: // meta
+    static Game_Map_Master* Factory(std::string) noexcept(false);
 public:
     void Add_Agent(int, Traversal_Type, int, int);
     void List_All_Agents();
