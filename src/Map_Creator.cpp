@@ -27,9 +27,14 @@ void* Map_Creator::run() {
     int length = 100, filled = 0;
     int* x = new int[100];
     int* y = new int[100];
+    // http://www.cplusplus.com/reference/random/
+    std::default_random_engine engine;
+    std::uniform_int_distribution<int> distribution(1, 100);
+    auto roll_terrain = std::bind(distribution, engine);
 
     for (int i = 0; i < dimensions; i++) {
         for (int j = 0; j < dimensions; j++) {
+            // i begin with a map that is all passable, and add "seeds" of obstacles as random noise on the map
 
 
         } // for : j

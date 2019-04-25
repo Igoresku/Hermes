@@ -62,11 +62,11 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
                     else
                         current_map_abstractions[level][m][n]->Update_Capacity(cell_capacity);
 
-                    current_map_abstractions[level+1][previous_m][previous_n]->Set_Container(
-                            current_map_abstractions[level][m][n]);
+                    current_map_abstractions[level][m][n]->Add_Contained(
+                            current_map_abstractions[level+1][previous_m][previous_n]);
 
                     // adjacency is trivial with cells, but not with zones
-                    if (m != 0) if (current_map_abstractions[level][m-1][n] != nullptr)
+                    if (m != 0) if (current_map_abstractions[level][m - 1][n] != nullptr)
                         if (Cell* connection = current_map_abstractions[level][m-1][n]->Adjacent_South(m, n)) {
                             current_map_abstractions[level][m][n]->Add_Neighbour(
                                     current_map_abstractions[level][m - 1][n]);
@@ -77,7 +77,7 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
                                     current_map_abstractions[level][m - 1][n], connection);
                             current_map_abstractions[level][m - 1][n]->Add_Connection(
                                     current_map_abstractions[level][m][n],
-                                    current_map_abstractions[level-1][previous_m][previous_n]);
+                                    current_map_abstractions[level - 1][previous_m][previous_n]);
                         }
 
                     if (n != 0) if (current_map_abstractions[level][m][n-1] != nullptr)
@@ -88,10 +88,10 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
                                     current_map_abstractions[level][m][n]);
                             // the lower level connections between zones are identified
                             current_map_abstractions[level][m][n]->Add_Connection(
-                                    current_map_abstractions[level][m][n-1], connection);
-                            current_map_abstractions[level][m][n-1]->Add_Connection(
+                                    current_map_abstractions[level][m][n - 1], connection);
+                            current_map_abstractions[level][m][n - 1]->Add_Connection(
                                     current_map_abstractions[level][m][n],
-                                    current_map_abstractions[level-1][previous_m][previous_n]);
+                                    current_map_abstractions[level - 1][previous_m][previous_n]);
                         }
 
                     previous_m = m;
@@ -107,4 +107,11 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
     } // for : i
 
     map_abstractions[(int)traversal_type] = new Map_Abstraction(0, 0, max_capacity);
+    for (int i = 0; i < abstraction_size; i++)
+        for (int j = 0; j < abstraction_size; j++)
+            if (current_map_abstractions[0][i][j] != nullptr) {
+                current_map_abstractions[0][i][j]->Set_Container(map_abstractions[(int)traversal_type]);
+                map_abstractions[(int)traversal_type]->Add_Contained(current_map_abstractions[0][i][j]);
+            }
 }
+

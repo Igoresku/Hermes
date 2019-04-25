@@ -16,12 +16,13 @@ public:
     int Get_Y() const { return y; };
     int Get_Capacity() const { return capacity; };
     void Update_Capacity(int new_capacity) { if (new_capacity > capacity) capacity = new_capacity; };
+    void Set_Container(Cell* cell) { container = cell; };
 
     virtual Cell* Adjacent_East(int i, int j) const { return nullptr; };
     virtual Cell* Adjacent_South(int i, int j) const { return nullptr; };
-    virtual void Set_Container(Cell* cell) { container = cell; };
     virtual void Add_Neighbour(Cell*);
     virtual void Add_Connection(Cell*, Cell*) {};
+    virtual void Add_Contained(Cell*) {};
 
     virtual bool Find_Path(Cell**, int, Cell**, int) { return true; };
 

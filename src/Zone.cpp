@@ -4,7 +4,7 @@
 
 #include "../include/Zone.h"
 
-void Zone::Find_Path(Cell **starting_positions, int first_array_size, Cell **destination_positions, int second_array_size) {
+bool Zone::Find_Path(Cell **starting_positions, int first_array_size, Cell **destination_positions, int second_array_size) {
 
 }
 
@@ -22,21 +22,6 @@ Cell* Zone::Adjacent_South(int i, int j) const {
             return contained[m];
 
     return nullptr;
-}
-
-void Zone::Set_Container(Cell* cell) {
-    if (number_of_contained % 8 == 0) {
-        auto replace_array = new Cell*[number_of_contained + 8];
-        for (int i = 0; i < number_of_contained + 8; i++) {
-            replace_array[i] = (i < number_of_contained) ? contained[i] : nullptr;
-            contained[i] = nullptr;
-        }
-        delete[] contained;
-        contained = replace_array;
-    }
-
-    contained[number_of_contained++] = cell;
-    Cell::Set_Container(cell);
 }
 
 void Zone::Add_Neighbour(Cell* cell) {
@@ -80,4 +65,19 @@ void Zone::Add_Connection(Cell* neighbour, Cell* connection) {
     replace_array_single_connections[number_of_connections[i]++] = connection;
     delete[] connections[i];
     connections[i] = replace_array_single_connections;
+}
+
+void Zone::Add_Contained(Cell* cell) {
+    if (number_of_contained % 10 == 0) {
+        auto replace_array = new Cell*[number_of_contained + 10];
+        for (int i = 0; i < number_of_contained + 10; i++) {
+            replace_array[i] = (i < number_of_contained) ? contained[i] : nullptr;
+            contained[i] = nullptr;
+        }
+        delete[] contained;
+        contained = replace_array;
+    }
+
+    contained[number_of_contained++] = cell;
+    cell->Set_Container(this);
 }

@@ -15,9 +15,9 @@ public:
 
     Cell* Adjacent_East(int, int) const override;
     Cell* Adjacent_South(int, int) const override;
-    void Set_Container(Cell*) override;
     void Add_Neighbour(Cell*) override;
     void Add_Connection(Cell*, Cell*) override;
+    void Add_Contained(Cell*) override;
     // ~Zone() override;
 private:
     Cell** contained = nullptr;
