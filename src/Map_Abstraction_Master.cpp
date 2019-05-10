@@ -1,5 +1,5 @@
 //
-// Created by Igor Duric on 4/1abstraction_size/19.
+// Created by Igor Duric on 4/18/19.
 //
 
 #include "../include/Map_Abstraction_Master.h"
@@ -28,6 +28,17 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
 
         } // for : j
     } // for : i
+
+    /*    auto cached_horizontal = new Cell**[hierarchy_size];
+    for (int i = 0, cache_size = 8; i < hierarchy_size; i++, cache_size *= 8) {
+        cached_horizontal[i] = new Cell*[cache_size];
+        for (int j = 0; j < cache_size; j++)
+            cached_horizontal[j++] = nullptr;
+    }
+
+    auto cached_vertical = new Cell*[hierarchy_size];
+    for (int i = 0; i < hierarchy_size; )
+        cached_vertical[i++] = nullptr;  TBD  */
 
     /* Now, I analyze the map and create cells of abstraction as I come across passable terrain,
      * this creation then propagates upwards through the levels of abstraction and creates them
@@ -109,9 +120,8 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
     map_abstractions[(int)traversal_type] = new Map_Abstraction(0, 0, max_capacity);
     for (int i = 0; i < abstraction_size; i++)
         for (int j = 0; j < abstraction_size; j++)
-            if (current_map_abstractions[0][i][j] != nullptr) {
+            if (current_map_abstractions[0][i][j] != nullptr)
                 current_map_abstractions[0][i][j]->Set_Container(map_abstractions[(int)traversal_type]);
-                map_abstractions[(int)traversal_type]->Add_Contained(current_map_abstractions[0][i][j]);
-            }
+
 }
 

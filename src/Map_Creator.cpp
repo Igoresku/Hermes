@@ -24,20 +24,51 @@ Map_Creator::Map_Creator(int dimensions, int abstraction_size, float obstacle_fa
 }
 
 void* Map_Creator::run() {
-    int length = 100, filled = 0;
-    int* x = new int[100];
-    int* y = new int[100];
-    // http://www.cplusplus.com/reference/random/
-    std::default_random_engine engine;
-    std::uniform_int_distribution<int> distribution(1, 100);
-    auto roll_terrain = std::bind(distribution, engine);
+    siv::PerlinNoise perlin_noise;
+    std::ifstream f_file_names;
+    std::ofstream out_file;
 
+    std::string makeshift_name = std::to_string(dimensions) + "_" + std::to_string(abstraction_size) + "_"
+            + std::to_string(obstacle_factor) + "_" + std::to_string(max_agent_size);
+
+    f_file_names.open(file_names);
+    std::string iterator;
+    int file_number = 0;
+    while (std::getline(f_file_names, iterator)) {
+        int i = 0;
+        for (; i <= makeshift_name.length(); i++) {
+            if (iterator[i] != makeshift_name[i])
+                break;
+        }
+
+        if (i == makeshift_name.length() + 1)
+            file_number++;
+    }
+    f_file_names.close();
+
+    makeshift_name = makeshift_name + "_" + std::to_string(file_number) + ".txt";
+    out_file.open(makeshift_name);
+    obstacle_factor /= 100;
     for (int i = 0; i < dimensions; i++) {
         for (int j = 0; j < dimensions; j++) {
-            // i begin with a map that is all passable, and add "seeds" of obstacles as random noise on the map
+            double rand = perlin_noise.octaveNoise( i / 32.0, j / 32.0, 8);
 
+            if (rand > obstacle_factor) {
+                if (rand > 0.5)
+                    out_file << '^';
+                else
+                    out_file << '~';
+            } else
+                out_file << '_';
 
         } // for : j
+
+        out_file << '\n';
     } // for : i
+    out_file.close();
+
+    out_file.open(file_names, std::ios_base::app);
+    out_file <<  makeshift_name << '\n';
+    out_file.close();
     return nullptr;
 }

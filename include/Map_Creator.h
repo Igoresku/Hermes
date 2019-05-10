@@ -6,8 +6,10 @@
 #define PATH_FINDING_MAP_CREATOR_H
 
 #include <random>
+#include <fstream>
 #include "Runnable.h"
 #include "Invalid_Parameters.h"
+#include "../../../Git/PerlinNoise/PerlinNoise.hpp"
 
 class Map_Creator: public Runnable {
 public: // Meta
@@ -23,6 +25,7 @@ private:
     int abstraction_size;
     float obstacle_factor;
     int max_agent_size;
+    std::string file_names = "file_names.txt";
 };
 
 #endif //PATH_FINDING_MAP_CREATOR_H
