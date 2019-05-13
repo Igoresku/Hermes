@@ -28,6 +28,7 @@ Game_Map_Master* Game_Map_Master::Factory(std::string file_name) {
     char read_data;
     for (int i = 0; i < dimensions / 4; i++) {
         for (int j = 0; j < dimensions / 4; j++) {
+            // this ignores the '\n' character
             input_File >> read_data;
             switch (read_data) {
                 case '_': {
@@ -42,11 +43,6 @@ Game_Map_Master* Game_Map_Master::Factory(std::string file_name) {
 
                 case '^': {
                     raw_map[i/4][j/4] |= 0x80 >> ((j%4)*2);
-                    break;
-                }
-
-                case '\n': {
-                    j--;
                     break;
                 }
 

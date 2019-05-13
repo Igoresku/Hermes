@@ -24,7 +24,7 @@ Cell* Zone::Adjacent_South(int i, int j) const {
     return nullptr;
 }
 
-void Zone::Add_Neighbour(Cell* cell) {
+void Zone::Add_Neighbour(Cell* cell) { // TODO: check this
     for (int i = 0; i < number_of_neighbours; )
         if (neighbours[i++] == cell)
             return;
