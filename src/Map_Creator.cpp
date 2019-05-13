@@ -4,6 +4,7 @@
 
 #include "../include/Map_Creator.h"
 
+const std::string Map_Creator::file_names = "file_names.txt";
 
 Map_Creator* Map_Creator::Factory(int dimensions, int abstraction_size, float obstacle_factor, int max_agent_size) {
     if ((dimensions % abstraction_size) || (dimensions < 0) || (dimensions < 0))
@@ -27,7 +28,6 @@ void* Map_Creator::run() {
     siv::PerlinNoise perlin_noise;
     std::ifstream f_file_names;
     std::ofstream out_file;
-
     std::string makeshift_name = std::to_string(dimensions) + "_" + std::to_string(abstraction_size) + "_"
             + std::to_string(obstacle_factor) + "_" + std::to_string(max_agent_size);
 
@@ -48,12 +48,13 @@ void* Map_Creator::run() {
 
     makeshift_name = makeshift_name + "_" + std::to_string(file_number) + ".txt";
     out_file.open(makeshift_name);
+    out_file << dimensions << '\n' << abstraction_size << '\n' << max_agent_size << '\n';
     obstacle_factor /= 100;
     for (int i = 0; i < dimensions; i++) {
         for (int j = 0; j < dimensions; j++) {
-            double rand = perlin_noise.octaveNoise( i / 32.0, j / 32.0, 8);
+            double rand = perlin_noise.octaveNoise(i / 32.0, j / 32.0, 8);
 
-            if (rand > obstacle_factor) {
+            if (rand >= obstacle_factor) {
                 if (rand > 0.5)
                     out_file << '^';
                 else

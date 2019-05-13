@@ -14,37 +14,45 @@ Game_Map_Master* Game_Map_Master::Factory(std::string file_name) {
     input_File >> dimensions;
     input_File >> abstraction_size;
     input_File >> max_agent_size;
-    auto raw_map = new int*[dimensions];
-    for (int i = 0; i < dimensions; )
-        raw_map[i++] = new int[dimensions];
-
-
     if (dimensions % abstraction_size)
         throw Invalid_File_Format(abstraction_size, dimensions);
 
+    auto raw_map = new uint8_t*[dimensions / 4];
+    for (int i = 0; i < dimensions / 4; i++) {
+        raw_map[i] = new uint8_t[dimensions / 4];
+        for (int j = 0; j < dimensions / 4; j++)
+            raw_map[i][j] = 0x00;
+    }
+
+    // TODO: implement the file that contains graphs as bit maps
     char read_data;
-    for (int i = 0; i < dimensions; i++) {
-        for (int j = 0; j < dimensions; j++) {
+    for (int i = 0; i < dimensions / 4; i++) {
+        for (int j = 0; j < dimensions / 4; j++) {
             input_File >> read_data;
             switch (read_data) {
                 case '_': {
-                    raw_map[i][j] = 0;
+                    raw_map[i/4][j/4] |= 0x00 >> ((j%4)*2);
                     break;
                 }
 
                 case '~': {
-                    raw_map[i][j] = 1;
+                    raw_map[i/4][j/4] |= 0x40 >> ((j%4)*2);
                     break;
                 }
 
                 case '^': {
-                    raw_map[i][j] = 2;
+                    raw_map[i/4][j/4] |= 0x80 >> ((j%4)*2);
+                    break;
+                }
+
+                case '\n': {
+                    j--;
                     break;
                 }
 
                 default: {
-                    for (int k = 0; k < dimensions; )
-                        delete raw_map[k++];
+                    for (int k = 0; k < dimensions / 4; k++)
+                        delete[] raw_map[k];
                     delete[] raw_map;
 
                     throw Invalid_File_Format(read_data);
@@ -57,7 +65,7 @@ Game_Map_Master* Game_Map_Master::Factory(std::string file_name) {
     return new Game_Map_Master(dimensions, abstraction_size, max_agent_size, raw_map);
 }
 
-Game_Map_Master::Game_Map_Master(int dimensions, int abstraction_size, int max_agent_size, int** raw_map)
+Game_Map_Master::Game_Map_Master(int dimensions, int abstraction_size, int max_agent_size, uint8_t** raw_map)
     : dimensions(dimensions), abstraction_size(abstraction_size), max_agent_size(max_agent_size), raw_map(raw_map) {
 }
 
@@ -65,14 +73,14 @@ void* Game_Map_Master::run() {
     maps[0] = new Game_Map(raw_map, dimensions, max_agent_size, Traversal_Type::Walking);
     maps[1] = new Game_Map(raw_map, dimensions, max_agent_size, Traversal_Type::Swimming);
 
-    for (int i = 0; i < dimensions; )
-        delete[] raw_map[i++];
+    for (int i = 0; i < dimensions; i++)
+        delete[] raw_map[i];
     delete[] raw_map;
+    raw_map = nullptr;
 
     map_abstraction_master = new Map_Abstraction_Master(dimensions, abstraction_size);
     map_abstraction_master->Create_Abstraction(maps[0], Traversal_Type::Walking);
     map_abstraction_master->Create_Abstraction(maps[1], Traversal_Type::Swimming);
-
     return nullptr;
 }
 

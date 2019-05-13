@@ -6,6 +6,7 @@
 #define PATH_FINDING_GAME_MAP_MASTER_H
 
 #include <fstream>
+#include <cstdint>
 #include "Runnable.h"
 #include "Game_Map.h"
 #include "Agent.h"
@@ -22,7 +23,7 @@ public:
 
     ~Game_Map_Master() override = default;
 protected:
-    Game_Map_Master(int, int, int, int**);
+    Game_Map_Master(int, int, int, uint8_t**);
 
     void* run() override;
 
@@ -33,7 +34,7 @@ private:
     Agent** agents = nullptr;
     int number_of_agents = 0;
 
-    int** raw_map;
+    uint8_t** raw_map;
     Game_Map* maps[2] = { nullptr, nullptr };
     Map_Abstraction_Master* map_abstraction_master;
 }; // class Game_Map_Master

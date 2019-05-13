@@ -25,7 +25,7 @@ private:
     int abstraction_size;
     float obstacle_factor;
     int max_agent_size;
-    std::string file_names = "file_names.txt";
+    static const std::string file_names;
 };
 
 #endif //PATH_FINDING_MAP_CREATOR_H

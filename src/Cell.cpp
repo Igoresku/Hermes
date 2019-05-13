@@ -16,4 +16,6 @@ void Cell::Add_Neighbour(Cell* cell) {
     neighbours = replace_array;
 }
 
-// Cell::~Cell() {}
+Cell::~Cell() {
+    container = nullptr;
+}

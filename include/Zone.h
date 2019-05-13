@@ -9,7 +9,7 @@
 
 class Zone : public Cell {
 public:
-    Zone(int x, int y, int capacity = 0) : Cell(x, y, capacity) {};
+    Zone(int x, int y, int level, int capacity = 0) : Cell(x, y, level, capacity) {};
 
     bool Find_Path(Cell**, int, Cell**, int) override;
 

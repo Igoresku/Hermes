@@ -53,7 +53,7 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
                 int cell_capacity = game_map->Get_Cell_Content(i, j);
                 if (cell_capacity > max_capacity)
                     max_capacity = cell_capacity;
-                first_level_abstraction[i][j] = new Cell(i, j, cell_capacity);
+                first_level_abstraction[i][j] = new Cell(i, j, 0, cell_capacity);
 
                 // neighbouring west and north cells are connected, if such cells exist
                 if (i != 0) if (first_level_abstraction[i-1][j] != nullptr) {
@@ -69,7 +69,7 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
                 int m = i / abstraction_size, n = j / abstraction_size, previous_m = i, previous_n = j;
                 for (int level = hierarchy_size - 2; level >= 0; level--) {
                     if (current_map_abstractions[level][m][n] == nullptr)
-                        current_map_abstractions[level][m][n] = new Zone(m, n, cell_capacity);
+                        current_map_abstractions[level][m][n] = new Zone(m, n, hierarchy_size - level - 1, cell_capacity);
                     else
                         current_map_abstractions[level][m][n]->Update_Capacity(cell_capacity);
 
@@ -117,7 +117,7 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
         } // for : j
     } // for : i
 
-    map_abstractions[(int)traversal_type] = new Map_Abstraction(0, 0, max_capacity);
+    map_abstractions[(int)traversal_type] = new Map_Abstraction(0, 0, hierarchy_size-1, max_capacity);
     for (int i = 0; i < abstraction_size; i++)
         for (int j = 0; j < abstraction_size; j++)
             if (current_map_abstractions[0][i][j] != nullptr)

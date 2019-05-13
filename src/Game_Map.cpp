@@ -4,25 +4,30 @@
 
 #include "../include/Game_Map.h"
 
-Game_Map::Game_Map(int** raw_map, int dimensions, int max_agent_size, Traversal_Type traversal_type) {
-    this->map = new int*[dimensions];
-    for (int i = 0; i < dimensions; i++)
-        this->map[i] = new int[dimensions];
+Game_Map::Game_Map(uint8_t** raw_map, int dimensions, int max_agent_size, Traversal_Type traversal_type) {
+    map = new uint8_t*[dimensions / 4];
+    for (int i = 0; i < dimensions / 4; i++)
+        map[i] = new uint8_t[dimensions / 4];
 
-    for (int i = 0; i < dimensions; i++) {
-        for (int j = 0; j < dimensions; j++) {
-            // i check if cell is passable at all for given traversal type
-            if (raw_map[i][j] <= (int)traversal_type) {
+    for (int i = 0; i < dimensions / 4; i++) {
+        for (int j = 0; j < dimensions / 4; j++) {
+            uint8_t content = raw_map[i/4][j/4] >> ((3-(j%4))*2);
+            content &= 0x03;
+
+            if (content <= (int)traversal_type) {
                 bool failed = false;
 
-                this->map[i][j] = 1;
-                // i check if agent of size agent_size can fit into this spot
+                uint8_t value = 1;
+                // i use rectangular clearance to calculate the max agent size that can fit into this cell
+                // TODO: implement spherical clearance
                 for (int agent_size = 1; agent_size < max_agent_size; agent_size++) {
                     if ((i + agent_size >= dimensions) || (j + agent_size >= dimensions))
                         break;
 
                     for (int m = 1; m <= agent_size; m++) {
-                        if (raw_map[i + agent_size][j + m] > (int)traversal_type) {
+                        content = raw_map[(i+agent_size)/4][(j+m)/4] >> ((3-(j%4))*2);
+                        content &= 0x03;
+                        if (content > (int)traversal_type) {
                             failed = true;
                             break;
                         }
@@ -32,16 +37,23 @@ Game_Map::Game_Map(int** raw_map, int dimensions, int max_agent_size, Traversal_
                         break;
 
                     for (int m = 1; m <= agent_size; m++) {
-                        if (raw_map[i + m][j + agent_size] > (int)traversal_type) {
+                        content = raw_map[(i+m)/4][(j+agent_size)/4] >> ((3-(j%4))*2);
+                        content &= 0x03;
+                        if (content > (int)traversal_type) {
+                            failed = true;
                             break;
                         }
                     } // for : m
 
-                    this->map[i][j]++;
+                    if (failed)
+                        break;
+
+                    value++;
                 } // for : agent_size
+                map[i/4][j/4] |= value << ((3-(j%4))*2);
             } else {
                 // terrain is set to impassable for this traversal type
-                this->map[i][j] = 0;
+                map[i/4][j/4] &= 0x3F >> ((j%4)*2);
             }// if : map[i][j]
 
         } // for : j

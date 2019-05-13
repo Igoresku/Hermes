@@ -9,7 +9,7 @@
 
 class Map_Abstraction: public Zone {
 public:
-    Map_Abstraction(int x, int y, int capacity);
+    Map_Abstraction(int x, int y, int level, int capacity) : Zone(x, y, level, capacity) {};
 
     bool Find_Path(Cell**, int, Cell**, int) override;
 
