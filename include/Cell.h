@@ -18,7 +18,7 @@ public:
     int Get_Level() const { return level; };
     int Get_Capacity() const { return capacity; };
     void Update_Capacity(int new_capacity) { if (new_capacity > capacity) capacity = new_capacity; };
-    void Set_Container(Cell* cell) { container = cell; };
+    void Set_Container(Cell* cell) { if (container == nullptr) container = cell; };
 
     virtual Cell* Adjacent_East(int i, int j) const { return nullptr; };
     virtual Cell* Adjacent_South(int i, int j) const { return nullptr; };

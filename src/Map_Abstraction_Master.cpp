@@ -62,7 +62,7 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
                     Make_Neighbours(first_level_abstraction[i][j], first_level_abstraction[i][j-1]);
 
                 // i travel upwards through levels of abstraction, and notify relevant zones of cells creation
-                int m = i / abstraction_size, n = j / abstraction_size, previous_m = i, previous_n = j;
+                int m = i / abstraction_size, n = j / abstraction_size, prev_m = i, prev_n = j;
                 for (int level = hierarchy_size - 2; level >= 0; level--) {
                     if (current_map_abstractions[level][m][n] == nullptr)
                         current_map_abstractions[level][m][n] = new Zone(m, n, hierarchy_size-level-1, cell_capacity);
@@ -70,21 +70,21 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
                         current_map_abstractions[level][m][n]->Update_Capacity(cell_capacity);
 
                     current_map_abstractions[level][m][n]->Add_Contained(
-                            current_map_abstractions[level+1][previous_m][previous_n]);
+                            current_map_abstractions[level+1][prev_m][prev_n]);
                     // neighbouring west and north zones are connected, if such zones exist
                     // also, connections between them are identified
                     if (m != 0) if (current_map_abstractions[level][m-1][n] != nullptr)
                         if (Cell* connection = current_map_abstractions[level][m-1][n]->Adjacent_South(m, n))
                             Make_Neighbours(current_map_abstractions[level][m][n], current_map_abstractions[level][m-1][n],
-                                    connection, current_map_abstractions[level+1][previous_m][previous_n]);
+                                    connection, current_map_abstractions[level+1][prev_m][prev_n]);
 
                     if (n != 0) if (current_map_abstractions[level][m][n-1] != nullptr)
                         if (Cell* connection = current_map_abstractions[level][n][n-1]->Adjacent_East(m, n))
                             Make_Neighbours(current_map_abstractions[level][m][n], current_map_abstractions[level][m][n-1],
-                                    connection, current_map_abstractions[level+1][previous_m][previous_n]);
+                                    connection, current_map_abstractions[level+1][prev_m][prev_n]);
 
-                    previous_m = m;
-                    previous_n = n;
+                    prev_m = m;
+                    prev_n = n;
                     m = m / abstraction_size;
                     n = n / abstraction_size;
                 } // for : level

@@ -13,7 +13,14 @@ public:
 
     bool Find_Path(Cell**, int, Cell**, int) override;
 
-private:
+    ~Map_Abstraction() override;
+protected:
+    // Cell** neighbours = nullptr;
+    // int number_of_neighbours = 0;
+    // Cell** contained = nullptr;
+    // Cell*** connections = nullptr;
+    // int* number_of_connections = nullptr;
+    // int number_of_contained = 0;
 
 };
 
