@@ -4,7 +4,7 @@
 
 #include "../include/Map_Creator.h"
 
-const std::string Map_Creator::file_names = "file_names.txt";
+const std::string Map_Creator::file_names = "../maps/file_names.txt";
 
 Map_Creator* Map_Creator::Factory(int dimensions, int abstraction_size, float obstacle_factor, int max_agent_size) {
     if ((dimensions % abstraction_size) || (dimensions < 0) || (dimensions < 0))
@@ -45,8 +45,12 @@ void* Map_Creator::run() {
             file_number++;
     }
     f_file_names.close();
+    makeshift_name = makeshift_name + "_" + std::to_string(file_number);
+    out_file.open(file_names, std::ios_base::app);
+    out_file <<  makeshift_name << '\n';
+    out_file.close();
 
-    makeshift_name = makeshift_name + "_" + std::to_string(file_number) + ".txt";
+    makeshift_name = "../maps/" + makeshift_name + ".txt";
     out_file.open(makeshift_name);
     out_file << dimensions << '\n' << abstraction_size << '\n' << max_agent_size << '\n';
     obstacle_factor /= 100;
@@ -66,10 +70,7 @@ void* Map_Creator::run() {
 
         out_file << '\n';
     } // for : i
-    out_file.close();
 
-    out_file.open(file_names, std::ios_base::app);
-    out_file <<  makeshift_name << '\n';
     out_file.close();
     return nullptr;
 }

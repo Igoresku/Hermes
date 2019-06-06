@@ -61,7 +61,7 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
                 if (j != 0) if (first_level_abstraction[i][j-1] != nullptr)
                     Make_Neighbours(first_level_abstraction[i][j], first_level_abstraction[i][j-1]);
 
-                // i travel upwards through levels of abstraction, and notify relevant zones of cells creation
+                // I travel upwards through levels of abstraction, and notify relevant zones of cells creation
                 int m = i / abstraction_size, n = j / abstraction_size, prev_m = i, prev_n = j;
                 for (int level = hierarchy_size - 2; level >= 0; level--) {
                     if (current_map_abstractions[level][m][n] == nullptr)
@@ -102,5 +102,6 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
             if (current_map_abstractions[0][i][j] != nullptr)
                 current_map_abstractions[0][i][j]->Set_Container(map_abstractions[(int)traversal_type]);
 
+    // TODO: now that the map is made, it has to be run through again and checked if there are zones that have their sub-zones divided by terrain
 }
 
