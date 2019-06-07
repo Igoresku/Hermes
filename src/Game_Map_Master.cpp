@@ -24,7 +24,6 @@ Game_Map_Master* Game_Map_Master::Factory(std::string file_name) {
             raw_map[i][j] = 0x00;
     }
 
-    // TODO: implement the file that contains graphs as bit maps, same as Hermes does
     char read_data;
     for (int i = 0; i < dimensions / 4; i++) {
         for (int j = 0; j < dimensions / 4; j++) {

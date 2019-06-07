@@ -18,8 +18,7 @@ Game_Map::Game_Map(uint8_t** raw_map, int dimensions, int max_agent_size, Traver
                 bool failed = false;
 
                 uint8_t value = 1;
-                // i use rectangular clearance to calculate the max agent size that can fit into this cell
-                // TODO: implement spherical clearance
+                // I use rectangular clearance to calculate the max agent size that can fit into this cell
                 for (int agent_size = 1; agent_size < max_agent_size; agent_size++) {
                     if ((i + agent_size >= dimensions) || (j + agent_size >= dimensions))
                         break;

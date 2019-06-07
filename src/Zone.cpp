@@ -6,7 +6,7 @@
 
 const int Zone::CHUNK = 10;
 
-Cell* Zone::Adjacent_East(int i, int j) const {
+Cell* Zone::Adjacent_Vertical(int i, int j) const {
     for (int m = 0; m < number_of_contained; m++)
         if ((contained[m]->Get_X() == i - 1) && (contained[m]->Get_Y() == j))
             return contained[m];
@@ -14,7 +14,7 @@ Cell* Zone::Adjacent_East(int i, int j) const {
     return nullptr;
 }
 
-Cell* Zone::Adjacent_South(int i, int j) const {
+Cell* Zone::Adjacent_Horizontal(int i, int j) const {
     for (int m = 0; m < number_of_contained; m++)
         if ((contained[m]->Get_X() == i) && (contained[m]->Get_Y() == j - 1))
             return contained[m];
@@ -72,9 +72,9 @@ void Zone::Add_Connection(Cell* neighbour, Cell* connection) {
 }
 
 void Zone::Add_Contained(Cell* cell) {
-    if (number_of_contained % 10 == 0) {
-        auto replace_array = new Cell*[number_of_contained + 10];
-        for (int i = 0; i < number_of_contained + 10; i++) {
+    if (number_of_contained % CHUNK == 0) {
+        auto replace_array = new Cell*[number_of_contained + CHUNK];
+        for (int i = 0; i < number_of_contained + CHUNK; i++) {
             replace_array[i] = (i < number_of_contained) ? contained[i] : nullptr;
             contained[i] = nullptr;
         }
@@ -86,7 +86,7 @@ void Zone::Add_Contained(Cell* cell) {
     cell->Set_Container(this);
 }
 
-bool Zone::Check_Fragmentation(Cell***& subzones, int*& number_of_subzones_elements, int& number_of_subzones) {
+bool Zone::Fragment(Cell***& subzones, int*& number_of_subzones_elements, int& number_of_subzones) {
     /* First I reset the state of the variables that I fill with data and create a copy of cells
      * contained in the zone that I can safely manipulate without changing the original array */
     for (int i = 0; i < number_of_subzones; i++) {
@@ -138,12 +138,13 @@ bool Zone::Check_Fragmentation(Cell***& subzones, int*& number_of_subzones_eleme
             auto neighbours = subzones[number_of_subzones - 1][i]->Get_Neighbours();
 
             for (int j = 0; j < subzones[number_of_subzones - 1][i]->Get_Number_Of_Neighbours(); j++) {
+
                 for (int k = 0; k < number_of_subzones_elements[number_of_subzones - 1]; k++) {
                     if (neighbours[i] == subzones[number_of_subzones -1][k]) {
                         already_placed = true;
                         break;
-                    } // if : neighbours[i]
-                } // for : k
+                    }
+                }
 
                 if (!already_placed) {
                     auto follower = head_contained_copy;
@@ -178,15 +179,31 @@ bool Zone::Check_Fragmentation(Cell***& subzones, int*& number_of_subzones_eleme
 
                             break;
                         }
+
                         follower = iterator;
                     }// for : iterator
-                }
+                } // if : !already_placed
+
             } // for : j
         } // for : i
 
     } // while (head_contained_copy != nullptr)
 
     return (number_of_subzones > 1);
+}
+
+void Zone::Replace(Cell* zone, Cell*** subzones, int* number_of_subzones_elements, int number_of_subzones) {
+    /* */
+    int i = 0;
+    for (; i < number_of_contained; i++) {
+        if (contained[i] == zone)
+            break;
+    }
+
+    for (int j = i; j < number_of_contained; j++) {
+        contained[j] = contained[j + 1];
+    }
+    number_of_contained -= 1;
 }
 
 bool Zone::Find_Path(Cell** starting_positions, int first_array_size, Cell** destination_positions, int second_array_size) {

@@ -9,6 +9,7 @@
 
 class Zone : public Cell {
 private: // meta
+    /** Nested trivial list element used inside Fragment function */
     class Zone_List_Element {
     public:
         explicit Zone_List_Element(Cell* payload, Zone_List_Element* next = nullptr): payload(payload), next(next) {};
@@ -18,23 +19,26 @@ private: // meta
 public:
     Zone(int x, int y, int level, int capacity = 0) : Cell(x, y, level, capacity) {};
 
-    Cell* Adjacent_East(int, int) const override;
-    Cell* Adjacent_South(int, int) const override;
+    Cell* Adjacent_Vertical(int, int) const override;
+    Cell* Adjacent_Horizontal(int, int) const override;
     void Add_Neighbour(Cell*) override;
     void Add_Connection(Cell*, Cell*) override;
     void Add_Contained(Cell*) override;
-    bool Check_Fragmentation(Cell***&, int*&, int&) final;
+    bool Fragment(Cell***&, int*&, int&) final;
+    void Replace(Cell*, Cell***, int*, int) final;
     bool Find_Path(Cell**, int, Cell**, int) override;
 
     ~Zone() override;
 protected:
-    // Cell** neighbours = nullptr;
-    // int number_of_neighbours = 0;
+    // TODO: Make connections actual separate objects that contain two lower level cells between connected zones
+    /** Contained cells that are connections to  */
     Cell*** connections = nullptr;
     int* number_of_connections = nullptr;
+    /** */
     Cell** contained = nullptr;
     int number_of_contained = 0;
 private:
+    /** Allocation chunk, made simply for better control of the code, default value is 10 for no particular reason */
     static const int CHUNK;
 };
 

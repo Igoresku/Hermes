@@ -13,10 +13,6 @@ public:
     explicit Map_Abstraction_Master(int, int = 8);
 
     void Create_Abstraction(Game_Map*, Traversal_Type&&);
-
-protected:
-    inline void Make_Neighbours(Cell*, Cell*);
-    inline void Make_Neighbours(Cell*, Cell*, Cell*, Cell*);
 private:
     Cell* map_abstractions[2] = { nullptr, nullptr };
     int dimensions;
