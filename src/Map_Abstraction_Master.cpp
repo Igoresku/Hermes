@@ -89,7 +89,7 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
     for (int i = 0; i < abstraction_size; i++) {
         for (int j = 0; j < abstraction_size; j++) {
             if (current_map_abstractions[0][i][j] != nullptr)
-                current_map_abstractions[0][i][j]->Set_Container(map_abstractions[(int) traversal_type]);
+                current_map_abstractions[0][i][j]->Set_Container(map_abstractions[(int)traversal_type]);
         }
     }
 

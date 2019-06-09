@@ -26,14 +26,18 @@ public:
     Cell** const Get_Neighbours() const { return neighbours; };
     int Get_Number_Of_Neighbours() const { return number_of_neighbours; };
     void Update_Capacity(int new_capacity) { if (new_capacity > capacity) capacity = new_capacity; };
-    void Set_Container(Cell* cell) { if (container == nullptr) container = cell; };
+    /** Usage is dangerous, use carefully */
+    void Set_Container(Cell* cell) { container = cell; };
 
     /** Trivial virtual functions or those that exist simply to be implemented in Zone but callable in Cell **/
     virtual Cell* Adjacent_Vertical(int i, int j) const { return nullptr; };
     virtual Cell* Adjacent_Horizontal(int i, int j) const { return nullptr; };
-    virtual void Add_Connection(Cell*, Cell*) {};
-    virtual void Add_Contained(Cell*) {};
-    virtual void Add_Neighbour(Cell*);
+    virtual void Add_Connection(Cell* neighbour, Cell* connection) {};
+    virtual void Remove_Connection(Cell* neighbour, Cell* connection) {};
+    virtual void Add_Contained(Cell* cell) {};
+    virtual void Remove_Contained(Cell* cell) {};
+    virtual void Add_Neighbour(Cell* cell);
+    virtual void Remove_Neighbour(Cell* cell);
 
     /** Check if all contained cells inside a zone are connected to each other:
      * subzones - collections of connected cells inside the zone
@@ -48,6 +52,10 @@ public:
      * number_of_subzones - number of identified subzones
      * */
     virtual void Replace(Cell* zone, Cell*** subzones, int* number_of_subzones_elements, int number_of_subzones) {};
+    /** This function is called when the cell is being fragmented and replaced for safe pointer deletion,
+     * it is similar to destructor but not the same, where destructor takes with itself all the data inside
+     * the arrays, Wipe_Clean prevents this */
+    virtual void Wipe_Clean();
     /*** */
     virtual bool Find_Path(Cell** starting_positions, int number_1, Cell** ending_positions, int number_2) { return true; };
 
@@ -56,13 +64,13 @@ protected:
     /** All neighbours to this cell and the number of them */
     Cell** neighbours = nullptr;
     int number_of_neighbours = 0;
+    Cell* container = nullptr;
 private:
     /** Trivial information about the cell */
     const int x;
     const int y;
     const int level;
     int capacity;
-    Cell* container = nullptr;
 };
 
 #endif //PATH_FINDING_CELL_ABSTRACTION_H
