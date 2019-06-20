@@ -4,16 +4,15 @@
 
 #include "../include/Runnable.h"
 
-Runnable::~Runnable() = default;
-
 void* Runnable::Stub(void* thiz) {
     auto runnable = (Runnable*) thiz;
     void* res = runnable->run();
     runnable->set_Done();
     return res;
-}
+} /// Stub : END
 
 void Runnable::start() {
     pthread_create(&handler, nullptr, Runnable::Stub, (void*) this);
-}
+} /// start : END
 
+Runnable::~Runnable() = default;

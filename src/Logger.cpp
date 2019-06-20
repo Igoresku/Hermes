@@ -11,4 +11,4 @@ Logger* Logger::Get_Logger_Instance() {
         logger = new Logger();
 
     return logger;
-}
+} /// Logger : END

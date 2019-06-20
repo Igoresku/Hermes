@@ -17,16 +17,18 @@ private: // meta
         Zone_List_Element* next;
     };
 public:
-    Zone(int x, int y, int level, int capacity = 0) : Cell(x, y, level, capacity) {};
+    Zone(int x, int y, int level, int capacity = 0, bool fragmented = false) : Cell(x, y, level, capacity), fragmented(fragmented) {};
 
     Cell* Adjacent_Vertical(int i, int j) const override;
     Cell* Adjacent_Horizontal(int i, int j) const override;
-    void Add_Connection(Cell* neighbour, Cell* connection) override; //
-    void Remove_Connection(Cell* neighbour, Cell* connection) override; //
+    Cell** const Get_Connections(Cell* neighbour) const override;
+    int Get_Number_Of_Connections(Cell* neighbour) const override;
+    void Add_Connection(Cell* neighbour, Cell* connection) override;
+    void Remove_Connection(Cell* neighbour, Cell* connection) override;
     void Add_Contained(Cell* cell) override;
-    void Remove_Contained(Cell* cell) override; //
+    void Remove_Contained(Cell* cell) override;
     void Add_Neighbour(Cell* cell) override;
-    void Remove_Neighbour(Cell* cell) override; //
+    void Remove_Neighbour(Cell* cell) override;
 
     bool Fragment(Cell***& subzones, int*& number_of_subzones_elements, int& number_of_subzones) final;
     /** All functions that remove cells from a structure of a zone MUST BE USED CAREFULLY,
@@ -50,6 +52,8 @@ protected:
 private:
     /** Allocation chunk, made simply for better control of the code, default value is 10 for no particular reason */
     static const int CHUNK;
+    /** Was this zone created normally or through fragmentation */
+    bool fragmented;
 };
 
 #endif //PATH_FINDING_ZONE_H

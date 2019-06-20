@@ -8,4 +8,4 @@ std::string Print_Traversal_Type(Traversal_Type traversal_type) {
     static std::string strings[3] = { "Walking", "Swimming" };
 
     return strings[(int)traversal_type];
-}
+} /// Print_Traversal_Type : END

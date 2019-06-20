@@ -12,7 +12,7 @@ Cell* Zone::Adjacent_Vertical(int i, int j) const {
             return contained[m];
 
     return nullptr;
-}
+} /// Adjacent_Vertical : END
 
 Cell* Zone::Adjacent_Horizontal(int i, int j) const {
     for (int m = 0; m < number_of_contained; m++)
@@ -20,7 +20,25 @@ Cell* Zone::Adjacent_Horizontal(int i, int j) const {
             return contained[m];
 
     return nullptr;
-}
+} /// Adjacent_Horizontal : END
+
+Cell** const Zone::Get_Connections(Cell* neighbour) const {
+    int i = 0;
+    for (; i < number_of_neighbours; i++)
+        if (neighbours[i] == neighbour)
+            return connections[i];
+
+    return nullptr;
+} /// Get_Connections : END
+
+int Zone::Get_Number_Of_Connections(Cell* neighbour) const {
+    int i = 0;
+    for (; i < number_of_neighbours; i++)
+        if (neighbours[i] == neighbour)
+            return number_of_connections[i];
+
+    return -1;
+} /// Get_Number_Of_Connections : END
 
 void Zone::Add_Connection(Cell* neighbour, Cell* connection) {
     int i = 0;
@@ -40,7 +58,7 @@ void Zone::Add_Connection(Cell* neighbour, Cell* connection) {
     replace_single_connections[number_of_connections[i]++] = connection;
     delete[] connections[i];
     connections[i] = replace_single_connections;
-}
+} /// Add_Connection : END
 
 void Zone::Remove_Connection(Cell* neighbour, Cell* connection) {
     int i = 0;
@@ -78,7 +96,7 @@ void Zone::Remove_Connection(Cell* neighbour, Cell* connection) {
         delete[] connections[i];
         connections[i] = replace_single_connections;
     }
-}
+} /// Remove_Connection : END
 
 void Zone::Add_Contained(Cell* cell) {
     if (number_of_contained % CHUNK == 0) {
@@ -93,7 +111,7 @@ void Zone::Add_Contained(Cell* cell) {
 
     contained[number_of_contained++] = cell;
     cell->Set_Container(this);
-}
+} /// Add_Contained : END
 
 void Zone::Remove_Contained(Cell* cell) {
     int i = 0;
@@ -119,14 +137,14 @@ void Zone::Remove_Contained(Cell* cell) {
         contained = replace_contained;
     }
 
-    int j = 0, k = 0;
-    for (; j < number_of_neighbours; j++)
-        for (; k < number_of_connections[j]; k++)
+    for (int j = 0; j < number_of_neighbours; j++) {
+        for (int k = 0; k < number_of_connections[j]; k++) {
             if (connections[j][k] == cell) {
                 Remove_Connection(neighbours[j], connections[j][k]);
-                break;
             }
-}
+        }
+    } // for : j
+} /// Remove_Contained : END
 
 void Zone::Add_Neighbour(Cell* cell) {
     for (int i = 0; i < number_of_neighbours; i++)
@@ -155,9 +173,9 @@ void Zone::Add_Neighbour(Cell* cell) {
     neighbours = replace_neighbours;
     connections = replace_connections;
     number_of_connections = replace_number_of_connections;
-}
+} /// Add_Neighbour : END
 
-void Zone::Remove_Neighbour(Cell *cell) {
+void Zone::Remove_Neighbour(Cell* cell) {
     int i = 0;
     for (; i < number_of_neighbours; i++)
         if (neighbours[i] == cell)
@@ -194,7 +212,7 @@ void Zone::Remove_Neighbour(Cell *cell) {
     neighbours = replace_neighbours;
     connections = replace_connections;
     number_of_connections = replace_number_of_connections;
-}
+} /// Remove_Neighbour : END
 
 bool Zone::Fragment(Cell***& subzones, int*& number_of_subzones_elements, int& number_of_subzones) {
     /* First I reset the state of the variables that I fill with data and create a copy of cells
@@ -241,11 +259,12 @@ bool Zone::Fragment(Cell***& subzones, int*& number_of_subzones_elements, int& n
             head_contained_copy = nullptr;
         }
 
-        /* I add all neighbours of the current cell to the subzone(that have
-         * not yet been added and those that are members of the current zone) */
-        bool already_placed = false;
+        /* For each cell that is currently in the subzone, I check if all of its neighbours are placed,
+         * if they are not they are added into the subzone. However, if they are not members of the
+         * zone (they are neighbours in another zone, connections) they are not added */
         for (int i = 0; i < number_of_subzones_elements[number_of_subzones - 1]; i++) {
             auto neighbours = subzones[number_of_subzones - 1][i]->Get_Neighbours();
+            bool already_placed = false;
 
             for (int j = 0; j < subzones[number_of_subzones - 1][i]->Get_Number_Of_Neighbours(); j++) {
 
@@ -288,7 +307,7 @@ bool Zone::Fragment(Cell***& subzones, int*& number_of_subzones_elements, int& n
                             }
 
                             break;
-                        }
+                        } // if : neighbours[i]
 
                         follower = iterator;
                     }// for : iterator
@@ -300,13 +319,90 @@ bool Zone::Fragment(Cell***& subzones, int*& number_of_subzones_elements, int& n
     } // while (head_contained_copy != nullptr)
 
     return (number_of_subzones > 1);
-}
+} /// Fragment : END
 
-void Zone::Replace(Cell* zone, Cell*** subzones, int* number_of_subzones_elements, int number_of_subzones) {
-    // this function has the responsibilty of cleaning up everything relating to zone that is being removed 
-    Remove_Contained(zone);
-    delete zone;
-}
+void Zone::Replace(Cell* cell, Cell*** subzones, int* number_of_subzones_elements, int number_of_subzones) {
+    // Remember that the contained cell might be of type Cell and Zone, this is
+    // important for the reason that they have a different structure and this
+    // function might fail at processing cells, since they dont have connections and number of them
+
+    /* Firstly, I get all the neighbours of the cell to be removed, and all of their connections to this zone.
+     * That is because these connections are connections that will be distributed over subzones without any
+     * excess or lacking. Also because zone is to be destroyed, it is removed from all its neighbours */
+    int cell_number_of_neighbours = cell->Get_Number_Of_Neighbours();
+    auto cell_neighbours = cell->Get_Neighbours();
+    auto neighbours_number_of_connections_to_cell = new int[cell_number_of_neighbours];
+    auto neighbours_connections_to_cell = new Cell**[cell_number_of_neighbours];
+    for (int i = 0; i < cell_number_of_neighbours; i++) {
+        auto neighbour_connections_copy = cell_neighbours[i]->Get_Connections(cell);
+        neighbours_number_of_connections_to_cell[i] = cell_neighbours[i]->Get_Number_Of_Connections(cell);
+
+        neighbours_connections_to_cell[i] = new Cell*[neighbours_number_of_connections_to_cell[i]];
+        for (int j = 0; j < neighbours_number_of_connections_to_cell[i]; j++)
+            neighbours_connections_to_cell[i][j] = neighbour_connections_copy[j];
+
+        cell_neighbours[i]->Remove_Neighbour(cell);
+    } // for : i
+
+    /* Secondly, remove all connections zones neighbours have to this zone,
+     * then finally remove the cell from the zone, clean and delete it. Also
+     * I save some relevant information of the cell for later */
+    const int x = cell->Get_X();
+    const int y = cell->Get_Y();
+    const int level = cell->Get_Level();
+    for (int i = 0; i < number_of_neighbours; i++) {
+        for (int j = 0; j < number_of_connections[i]; j++) {
+            if (connections[i][j] == cell) {
+                if (Cell* connection = neighbours[i]->Adjacent_Vertical(x, y))
+                    neighbours[i]->Remove_Connection(this, connection);
+
+                if (Cell* connection = neighbours[i]->Adjacent_Horizontal(x, y))
+                    neighbours[i]->Remove_Connection(this, connection);
+            }
+        }
+    } // for : i
+    Remove_Contained(cell);
+    cell->Wipe_Clean();
+    delete cell;
+
+    /* Finally, subzones are properly created and filled, then connected to neighbouring zones */
+    for (int i = 0; i < number_of_subzones; i++) {
+        auto subzone = new Zone(x, y, level, 0, true);
+        Add_Contained(subzone);
+
+        for (int j = 0; j < number_of_subzones_elements[i]; j++) {
+            subzone->Add_Contained(subzones[i][j]);
+            subzone->Update_Capacity(subzones[i][j]->Get_Capacity());
+
+            for (int m = 0; m < cell_number_of_neighbours; m++) {
+                for (int n = 0; n < neighbours_number_of_connections_to_cell[m]; n++) {
+                    if (Cell::Are_Adjacent(subzones[i][j], neighbours_connections_to_cell[m][n])) {
+                        Make_Neighbours(subzone, cell_neighbours[m], subzones[i][j], neighbours_connections_to_cell[m][n]);
+                        Make_Neighbours(this, cell_neighbours[m]->Get_Container(), subzone, cell_neighbours[m]);
+
+                        for (int k = n; k < neighbours_number_of_connections_to_cell[m] - 1; k++)
+                            neighbours_connections_to_cell[m][k] = neighbours_connections_to_cell[m][k + 1];
+                        neighbours_connections_to_cell[m][neighbours_number_of_connections_to_cell[m] - 1] = nullptr;
+                        neighbours_number_of_connections_to_cell[m] -= 1;
+                        n -= 1;
+
+                        if (neighbours_number_of_connections_to_cell[m] == 0) {
+                            for (int k = m; k < cell_number_of_neighbours - 1; k++)
+                                cell_neighbours[k] = cell_neighbours[k + 1];
+                            cell_neighbours[cell_number_of_neighbours - 1] = nullptr;
+                            cell_number_of_neighbours -= 1;
+                            m -= 1;
+                        }
+                    } // if : Cell::Are_Adjacent
+                }
+            }
+        } // for : j
+
+    } // for : i
+
+    delete[] neighbours_number_of_connections_to_cell;
+    delete[] neighbours_connections_to_cell;
+} /// Replace : END
 
 void Zone::Wipe_Clean() {
     container = nullptr;
@@ -328,11 +424,11 @@ void Zone::Wipe_Clean() {
 
     number_of_contained = 0;
     delete[] contained;
-}
+} /// Wipe_Clean : END
 
 bool Zone::Find_Path(Cell** starting_positions, int first_array_size, Cell** destination_positions, int second_array_size) {
 
-}
+} /// Find_Path : END
 
 Zone::~Zone() {
     delete[] contained;
@@ -347,4 +443,4 @@ Zone::~Zone() {
     }
     delete[] connections;
     delete[] number_of_connections;
-}
+} /// ~Zone : END

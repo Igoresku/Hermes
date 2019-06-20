@@ -10,4 +10,4 @@ Nonexistent_File::Nonexistent_File(std::string file_name) {
     strcat(message, "File ");
     strcat(message, file_name.c_str());
     strcat(message, " does not exist\n");
-}
+} /// Nonexistent_File : END

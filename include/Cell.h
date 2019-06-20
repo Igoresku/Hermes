@@ -5,13 +5,14 @@
 #ifndef PATH_FINDING_CELL_ABSTRACTION_H
 #define PATH_FINDING_CELL_ABSTRACTION_H
 
-
+// TODO: Create an Abstract Cell class with all the virtual functions, cleaning up the unnecessary clutter here
 class Cell {
 public: // meta
     /** Makes the basic cells neighbours to each other */
     static void Make_Neighbours(Cell* first, Cell* second);
     /** Makes cells that are actually zones neighbours to each other, and connects them accordingly */
     static void Make_Neighbours(Cell* first, Cell* second, Cell* connection_1_to_2, Cell* connection_2_to_1);
+    static bool Are_Adjacent(Cell* first, Cell* second);
 public:
     Cell(int x, int y, int level, int capacity = 0) : x(x), y(y), level(level), capacity(capacity) {};
     Cell(const Cell& cell) : x(cell.Get_X()),  y(cell.Get_Y()), level(cell.Get_Level()), capacity(cell.Get_Capacity()) {};
@@ -26,12 +27,14 @@ public:
     Cell** const Get_Neighbours() const { return neighbours; };
     int Get_Number_Of_Neighbours() const { return number_of_neighbours; };
     void Update_Capacity(int new_capacity) { if (new_capacity > capacity) capacity = new_capacity; };
-    /** Usage is dangerous, use carefully */
     void Set_Container(Cell* cell) { container = cell; };
 
     /** Trivial virtual functions or those that exist simply to be implemented in Zone but callable in Cell **/
     virtual Cell* Adjacent_Vertical(int i, int j) const { return nullptr; };
     virtual Cell* Adjacent_Horizontal(int i, int j) const { return nullptr; };
+    virtual Cell** const Get_Connections(Cell* neighbour) const { return nullptr; };
+    virtual int Get_Number_Of_Connections(Cell* neighbour) const { return 0; };
+    // TODO: make a public and a private version of removal functions, where private versions skip checking the arguments
     virtual void Add_Connection(Cell* neighbour, Cell* connection) {};
     virtual void Remove_Connection(Cell* neighbour, Cell* connection) {};
     virtual void Add_Contained(Cell* cell) {};
@@ -49,8 +52,7 @@ public:
      * zone - the zone that is to be replaced
      * subzones - collections of connected cells inside the zone
      * number_of_subzones_elements - number of cells in each of the subzones
-     * number_of_subzones - number of identified subzones
-     * */
+     * number_of_subzones - number of identified subzones */
     virtual void Replace(Cell* zone, Cell*** subzones, int* number_of_subzones_elements, int number_of_subzones) {};
     /** This function is called when the cell is being fragmented and replaced for safe pointer deletion,
      * it is similar to destructor but not the same, where destructor takes with itself all the data inside

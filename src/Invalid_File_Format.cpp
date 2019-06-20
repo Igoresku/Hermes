@@ -11,7 +11,7 @@ Invalid_File_Format::Invalid_File_Format(int abstraction_size, int dimensions) {
     strcat(message, " isn't a modulus of dimensions: ");
     strcat(message, std::to_string(dimensions).c_str());
     strcat(message, ")\n");
-}
+} /// Invalid_File_Format : END
 
 Invalid_File_Format::Invalid_File_Format(char character) {
     message = new char[35]; message[0] = '\0';
@@ -19,4 +19,4 @@ Invalid_File_Format::Invalid_File_Format(char character) {
     strcat(message, "File is in invalid format (unknown symbol: ");
     strcat(message, char_ptr);
     strcat(message, ")\n");
-}
+} /// Invalid_File_Format : END

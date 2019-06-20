@@ -12,6 +12,7 @@ Game_Map_Master* Game_Map_Master::Factory(std::string file_name) {
 
     int dimensions, abstraction_size, max_agent_size;
     input_File >> dimensions;
+    // TODO: Remove abstraction_size as hardcoded information inside the map, and instead make it so its calculated
     input_File >> abstraction_size;
     input_File >> max_agent_size;
     if (dimensions % abstraction_size)

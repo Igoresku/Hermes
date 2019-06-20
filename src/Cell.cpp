@@ -7,13 +7,19 @@
 void Cell::Make_Neighbours(Cell* first, Cell* second) {
     first->Add_Neighbour(second);
     second->Add_Neighbour(first);
-}
+} /// Make_Neighbours : END
 
 void Cell::Make_Neighbours(Cell* first, Cell* second, Cell* connection_1_to_2, Cell* connection_2_to_1) {
     Make_Neighbours(first, second);
     first->Add_Connection(second, connection_1_to_2);
     second->Add_Connection(first, connection_2_to_1);
-}
+} /// Make_Neighbours : END
+
+bool Cell::Are_Adjacent(Cell* first, Cell* second) {
+    bool adjacent_x = ((first->Get_X() - second->Get_X()) == 1) || ((first->Get_X() - second->Get_X()) == -1);
+    bool adjacent_y = ((first->Get_Y() - second->Get_Y()) == 1) || ((first->Get_Y() - second->Get_Y()) == -1);
+    return adjacent_x && adjacent_y;
+} /// Are_Adjacent : END
 
 void Cell::Add_Neighbour(Cell* cell) {
     for (int i = 0; i < number_of_neighbours; i++)
@@ -29,7 +35,7 @@ void Cell::Add_Neighbour(Cell* cell) {
     replace_array[number_of_neighbours++] = cell;
     delete[] neighbours;
     neighbours = replace_array;
-}
+} /// Add_Neighbour : END
 
 void Cell::Remove_Neighbour(Cell* cell) {
     int i = 0;
@@ -54,18 +60,17 @@ void Cell::Remove_Neighbour(Cell* cell) {
     number_of_neighbours -= 1;
     delete[] neighbours;
     neighbours = replace_neighbours;
-}
+} /// Remove_Neighbour : END
 
 void Cell::Wipe_Clean() {
     container = nullptr;
     for (int i = 0; i < number_of_neighbours; i++)
         neighbours[i] = nullptr;
 
-    // Destructor will be quicker
     number_of_neighbours = 0;
     delete[] neighbours;
-}
+} /// Wipe_Clean : END
 
 Cell::~Cell() {
     delete[] neighbours;
-}
+} /// ~Cell : END

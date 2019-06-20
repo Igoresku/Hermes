@@ -8,8 +8,7 @@ Map_Abstraction_Master::Map_Abstraction_Master(int dimensions, int abstraction_s
     hierarchy_size = 0;
     for (int i = dimensions; i > 1; i /= abstraction_size)
         hierarchy_size += 1;
-}
-
+} /// Map_Abstraction_Master : END
 
 void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Type&& traversal_type) {
     /* First step is creating a matrix of series of abstractions, this will allow me to
@@ -29,9 +28,9 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
         }
 
         matrix_size *= abstraction_size;
-    }
+    } // for : i
 
-    /* Now, I analyze the map and create cells of abstraction as I come across passable
+    /* Secondly, I analyze the map and create cells of abstraction as I come across passable
      * terrain, this creation then propagates upwards through the levels of abstraction and
      * creates them as necessary. Also as cells and zones are created they are linked to those
      * created previously and who might be concerned for adjacency's sake. After this is finished
@@ -57,7 +56,7 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
                 int m = i / abstraction_size, n = j / abstraction_size, prev_m = i, prev_n = j;
                 for (int level = hierarchy_size - 2; level >= 0; level--) {
                     if (current_map_abstractions[level][m][n] == nullptr)
-                        current_map_abstractions[level][m][n] = new Zone(m, n, hierarchy_size-level-1, cell_capacity); //
+                        current_map_abstractions[level][m][n] = new Zone(m, n, hierarchy_size-level-1, cell_capacity); ///
                     else
                         current_map_abstractions[level][m][n]->Update_Capacity(cell_capacity);
 
@@ -84,14 +83,13 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
 
         } // for : j
     } // for : i
-
     map_abstractions[(int)traversal_type] = new Map_Abstraction(0, 0, hierarchy_size, max_capacity);
     for (int i = 0; i < abstraction_size; i++) {
         for (int j = 0; j < abstraction_size; j++) {
             if (current_map_abstractions[0][i][j] != nullptr)
                 current_map_abstractions[0][i][j]->Set_Container(map_abstractions[(int)traversal_type]);
         }
-    }
+    } // for : i
 
     /* Finally, the map is run through again to be checked for zones that
      * are fragmented into disconnected subzones, if such subzones exist
@@ -109,6 +107,6 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
         }
 
         matrix_size /= abstraction_size;
-    }
-}
+    } // for : i
+} /// Create_Abstraction : END
 

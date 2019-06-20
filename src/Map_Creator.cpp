@@ -7,7 +7,7 @@
 const std::string Map_Creator::file_names = "../maps/file_names.txt";
 
 Map_Creator* Map_Creator::Factory(int dimensions, int abstraction_size, float obstacle_factor, int max_agent_size) {
-    if ((dimensions % abstraction_size) || (dimensions < 0) || (dimensions < 0))
+    if ((dimensions % abstraction_size) || (dimensions < 0) || (abstraction_size < 0))
         throw Invalid_Parameters(dimensions, abstraction_size);
 
     if ((max_agent_size < 1) || (max_agent_size > 5))
@@ -17,12 +17,10 @@ Map_Creator* Map_Creator::Factory(int dimensions, int abstraction_size, float ob
         throw Invalid_Parameters(obstacle_factor);
 
     return new Map_Creator(dimensions, abstraction_size, obstacle_factor, max_agent_size);
-}
+} /// Factory : END
 
 Map_Creator::Map_Creator(int dimensions, int abstraction_size, float obstacle_factor, int max_agent_size)
-    : dimensions(dimensions), abstraction_size(abstraction_size), obstacle_factor(obstacle_factor), max_agent_size(max_agent_size) {
-
-}
+    : dimensions(dimensions), abstraction_size(abstraction_size), obstacle_factor(obstacle_factor), max_agent_size(max_agent_size) {}
 
 void* Map_Creator::run() {
     siv::PerlinNoise perlin_noise;
@@ -73,4 +71,4 @@ void* Map_Creator::run() {
 
     out_file.close();
     return nullptr;
-}
+} /// run : END

@@ -58,5 +58,5 @@ Game_Map::Game_Map(uint8_t** raw_map, int dimensions, int max_agent_size, Traver
         } // for : j
     }// for : i
 
-};// Game_Map constructor
+} /// Game_Map : END
 
