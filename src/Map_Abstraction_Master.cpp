@@ -96,7 +96,7 @@ void Map_Abstraction_Master::Create_Abstraction(Game_Map* game_map, Traversal_Ty
      * they are separeted into zones to themselves on the same level */
     Cell*** subzones = nullptr;
     int* number_of_subzones_elements = nullptr;
-    int number_of_subzones;
+    int number_of_subzones = 0;
     for (int i = hierarchy_size - 1; i > 0; i--) {
         for (int j = 0; j < matrix_size; j++) {
             for (int k = 0; k < matrix_size; k++) {

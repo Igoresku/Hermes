@@ -78,7 +78,6 @@ void Zone::Remove_Connection(Cell* neighbour, Cell* connection) {
         return;
 
     if (number_of_connections[i] == 1) {
-        // if this is the last connection to the neighbour, then remove the neighbour completely
         Remove_Neighbour(neighbour);
     } else {
         auto replace_single_connections = new Cell*[number_of_connections[i] - 1];
@@ -217,12 +216,8 @@ void Zone::Remove_Neighbour(Cell* cell) {
 bool Zone::Fragment(Cell***& subzones, int*& number_of_subzones_elements, int& number_of_subzones) {
     /* First I reset the state of the variables that I fill with data and create a copy of cells
      * contained in the zone that I can safely manipulate without changing the original array */
-    for (int i = 0; i < number_of_subzones; i++) {
-        for (int j = 0; j < number_of_subzones_elements[i]; j++)
-            subzones[i][j] = nullptr;
-
+    for (int i = 0; i < number_of_subzones; i++)
         delete[] subzones[i];
-    }
     number_of_subzones = 0;
     Zone::Zone_List_Element* head_contained_copy = nullptr;
     for (int i = number_of_contained - 1; i >= 0; i--)
@@ -244,10 +239,9 @@ bool Zone::Fragment(Cell***& subzones, int*& number_of_subzones_elements, int& n
         number_of_subzones_elements = replace_number_of_subzones_elements;
         subzones[number_of_subzones] = new Cell*[CHUNK];
         number_of_subzones_elements[number_of_subzones] = 0;
-        number_of_subzones += 1;
 
-        subzones[number_of_subzones - 1][0] = head_contained_copy->payload;
-        number_of_subzones_elements[number_of_subzones - 1] = 1;
+        subzones[number_of_subzones][0] = head_contained_copy->payload;
+        number_of_subzones_elements[number_of_subzones] = 1;
         head_contained_copy->payload = nullptr;
         if (head_contained_copy->next != nullptr) {
             auto aux = head_contained_copy;
@@ -262,18 +256,18 @@ bool Zone::Fragment(Cell***& subzones, int*& number_of_subzones_elements, int& n
         /* For each cell that is currently in the subzone, I check if all of its neighbours are placed,
          * if they are not they are added into the subzone. However, if they are not members of the
          * zone (they are neighbours in another zone, connections) they are not added */
-        for (int i = 0; i < number_of_subzones_elements[number_of_subzones - 1]; i++) {
-            auto neighbours = subzones[number_of_subzones - 1][i]->Get_Neighbours();
+        for (int i = 0; i < number_of_subzones_elements[number_of_subzones]; i++) {
+            auto neighbours = subzones[number_of_subzones][i]->Get_Neighbours();
             bool already_placed = false;
 
-            for (int j = 0; j < subzones[number_of_subzones - 1][i]->Get_Number_Of_Neighbours(); j++) {
+            for (int j = 0; j < subzones[number_of_subzones][i]->Get_Number_Of_Neighbours(); j++) {
 
-                for (int k = 0; k < number_of_subzones_elements[number_of_subzones - 1]; k++) {
-                    if (neighbours[i] == subzones[number_of_subzones -1][k]) {
+                for (int k = 0; k < number_of_subzones_elements[number_of_subzones]; k++) {
+                    if (neighbours[i] == subzones[number_of_subzones][k]) {
                         already_placed = true;
                         break;
                     }
-                }
+                } // for : k
 
                 if (!already_placed) {
                     auto follower = head_contained_copy;
@@ -281,18 +275,18 @@ bool Zone::Fragment(Cell***& subzones, int*& number_of_subzones_elements, int& n
                     for (auto iterator = head_contained_copy; iterator != nullptr; iterator = iterator->next) {
                         if (neighbours[i] == iterator->payload) {
 
-                            if (number_of_subzones_elements[number_of_subzones - 1] % CHUNK == 0) {
-                                auto replace_subzone = new Cell*[number_of_subzones_elements[number_of_subzones - 1] + CHUNK];
+                            if (number_of_subzones_elements[number_of_subzones] % CHUNK == 0) {
+                                auto replace_subzone = new Cell*[number_of_subzones_elements[number_of_subzones] + CHUNK];
 
-                                for (int l = 0; l < number_of_subzones_elements[number_of_subzones - 1]; l++) {
-                                    replace_subzone[l] = subzones[number_of_subzones - 1][l];
-                                    subzones[number_of_subzones - 1][l] = nullptr;
+                                for (int l = 0; l < number_of_subzones_elements[number_of_subzones]; l++) {
+                                    replace_subzone[l] = subzones[number_of_subzones][l];
+                                    subzones[number_of_subzones][l] = nullptr;
                                 }
-                                delete[] subzones[number_of_subzones - 1];
-                                subzones[number_of_subzones - 1] = replace_subzone;
+                                delete[] subzones[number_of_subzones];
+                                subzones[number_of_subzones] = replace_subzone;
                             }
-                            number_of_subzones_elements[number_of_subzones - 1] += 1;
-                            subzones[number_of_subzones - 1][number_of_subzones_elements[number_of_subzones - 1]] = neighbours[i];
+                            number_of_subzones_elements[number_of_subzones] += 1;
+                            subzones[number_of_subzones][number_of_subzones_elements[number_of_subzones]] = neighbours[i];
 
                             if (follower == head_contained_copy) {
                                 head_contained_copy = head_contained_copy->next;
@@ -316,16 +310,13 @@ bool Zone::Fragment(Cell***& subzones, int*& number_of_subzones_elements, int& n
             } // for : j
         } // for : i
 
+        number_of_subzones += 1;
     } // while (head_contained_copy != nullptr)
 
     return (number_of_subzones > 1);
 } /// Fragment : END
 
 void Zone::Replace(Cell* cell, Cell*** subzones, int* number_of_subzones_elements, int number_of_subzones) {
-    // Remember that the contained cell might be of type Cell and Zone, this is
-    // important for the reason that they have a different structure and this
-    // function might fail at processing cells, since they dont have connections and number of them
-
     /* Firstly, I get all the neighbours of the cell to be removed, and all of their connections to this zone.
      * That is because these connections are connections that will be distributed over subzones without any
      * excess or lacking. Also because zone is to be destroyed, it is removed from all its neighbours */
@@ -350,6 +341,7 @@ void Zone::Replace(Cell* cell, Cell*** subzones, int* number_of_subzones_element
     const int x = cell->Get_X();
     const int y = cell->Get_Y();
     const int level = cell->Get_Level();
+    const int cell_num_neighbours_for_deletion = cell_number_of_neighbours;
     for (int i = 0; i < number_of_neighbours; i++) {
         for (int j = 0; j < number_of_connections[i]; j++) {
             if (connections[i][j] == cell) {
@@ -387,8 +379,11 @@ void Zone::Replace(Cell* cell, Cell*** subzones, int* number_of_subzones_element
                         n -= 1;
 
                         if (neighbours_number_of_connections_to_cell[m] == 0) {
-                            for (int k = m; k < cell_number_of_neighbours - 1; k++)
+                            for (int k = m; k < cell_number_of_neighbours - 1; k++) { // zaboravio si ostale nizove sa kojima se radi da pomeris
                                 cell_neighbours[k] = cell_neighbours[k + 1];
+                                neighbours_number_of_connections_to_cell[k] = neighbours_number_of_connections_to_cell[k + 1];
+                                neighbours_connections_to_cell[k] = neighbours_connections_to_cell[k + 1];
+                            }
                             cell_neighbours[cell_number_of_neighbours - 1] = nullptr;
                             cell_number_of_neighbours -= 1;
                             m -= 1;
@@ -396,11 +391,15 @@ void Zone::Replace(Cell* cell, Cell*** subzones, int* number_of_subzones_element
                     } // if : Cell::Are_Adjacent
                 }
             }
+
+            subzones[i][j] = nullptr;
         } // for : j
 
     } // for : i
 
     delete[] neighbours_number_of_connections_to_cell;
+    for (int i = 0; i < cell_num_neighbours_for_deletion; i++)
+        delete[] neighbours_connections_to_cell[i];
     delete[] neighbours_connections_to_cell;
 } /// Replace : END
 
