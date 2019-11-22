@@ -39,7 +39,4 @@ private:
     Map_Abstraction_Master* map_abstraction_master;
 }; // class Game_Map_Master
 
-// trenutno provera postojanja fajla i njegovog formata obavlja u konstruktoru, sto semanticki nije ispravno
-// ovo treba rijesiti factory metodom koja ce da izvrsi provjeru, i ako je sve u redu sa fajlom vratiti instancu objekta
-
 #endif //PATH_FINDING_GAME_MAP_MASTER_H

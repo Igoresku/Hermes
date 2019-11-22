@@ -121,8 +121,7 @@ void Zone::Remove_Contained(Cell* cell) {
     if (i == number_of_contained)
         return;
 
-    for (int j = i; j < number_of_contained - 1; j++)
-        contained[j] = contained[j + 1];
+    contained[i] = contained[number_of_contained - 1];
     contained[number_of_contained - 1] = nullptr;
     number_of_contained -= 1;
 
@@ -136,6 +135,7 @@ void Zone::Remove_Contained(Cell* cell) {
         contained = replace_contained;
     }
 
+    // I have to check whether this contained cell was a connection to some neighbour
     for (int j = 0; j < number_of_neighbours; j++) {
         for (int k = 0; k < number_of_connections[j]; k++) {
             if (connections[j][k] == cell) {
@@ -379,7 +379,7 @@ void Zone::Replace(Cell* cell, Cell*** subzones, int* number_of_subzones_element
                         n -= 1;
 
                         if (neighbours_number_of_connections_to_cell[m] == 0) {
-                            for (int k = m; k < cell_number_of_neighbours - 1; k++) { // zaboravio si ostale nizove sa kojima se radi da pomeris
+                            for (int k = m; k < cell_number_of_neighbours - 1; k++) {
                                 cell_neighbours[k] = cell_neighbours[k + 1];
                                 neighbours_number_of_connections_to_cell[k] = neighbours_number_of_connections_to_cell[k + 1];
                                 neighbours_connections_to_cell[k] = neighbours_connections_to_cell[k + 1];

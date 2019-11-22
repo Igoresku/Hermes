@@ -6,6 +6,7 @@
 #define PATH_FINDING_RUNNABLE_H
 
 #include <pthread.h>
+#include <semaphore.h>
 
 class Runnable {
 private:
