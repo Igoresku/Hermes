@@ -74,7 +74,7 @@ void* Game_Map_Master::run() {
     delete[] raw_map;
     raw_map = nullptr;
 
-    map_abstraction_master = new Map_Abstraction_Master(dimensions, abstraction_size);
+    map_abstraction_master = new Map_Abstraction(dimensions, abstraction_size);
     map_abstraction_master->Create_Abstraction(maps[0], Traversal_Type::Walking);
     map_abstraction_master->Create_Abstraction(maps[1], Traversal_Type::Swimming);
     return nullptr;

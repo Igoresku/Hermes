@@ -10,7 +10,7 @@
 #include "Runnable.h"
 #include "Game_Map.h"
 #include "Agent.h"
-#include "Map_Abstraction_Master.h"
+#include "Map_Abstraction.h"
 #include "Nonexistent_File.h"
 #include "Invalid_File_Format.h"
 
@@ -36,7 +36,7 @@ private:
 
     uint8_t** raw_map;
     Game_Map* maps[2] = { nullptr, nullptr };
-    Map_Abstraction_Master* map_abstraction_master;
+    Map_Abstraction* map_abstraction_master;
 }; // class Game_Map_Master
 
 #endif //PATH_FINDING_GAME_MAP_MASTER_H

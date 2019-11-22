@@ -1,68 +1,90 @@
 //
-// Created by Igor Duric on 4/19/19.
+// Created by Igor Duric on 11/22/19.
 //
 
 #include "../include/Map_Creator.h"
 
-Map_Creator::Map_Creator(int dimensions, int abstraction_size, float obstacle_factor, int max_agent_size)
-    : dimensions(dimensions), abstraction_size(abstraction_size), obstacle_factor(obstacle_factor), max_agent_size(max_agent_size),
-    file_names("../maps/file_names.txt") {
-    sem_init(&mutex, 0 , 1);
+Map_Creator* Map_Creator::instance = nullptr;
+
+Map_Creator* Map_Creator::Get_Instance() {
+    if (instance != nullptr)
+        instance = new Map_Creator();
+
+    return instance;
 }
 
-void* Map_Creator::run() {
-    siv::PerlinNoise perlin_noise;
-    std::ifstream f_file_names;
-    std::ofstream out_file;
-    std::string makeshift_name = std::to_string(dimensions) + "_" + std::to_string(abstraction_size) + "_"
-            + std::to_string(obstacle_factor) + "_" + std::to_string(max_agent_size);
-    int file_number;
+Map_Creator::Map_Creator() {
+    sem_init(&mutex, 0, 1);
+    sem_init(&amount, 0, 0);
+}
+
+void Map_Creator::Create_Map(int dimensions, int abstraction_size, float obstacle_factor, int max_agent_size) {
+
+    if ((dimensions % abstraction_size) || (dimensions < 0) || (abstraction_size < 0))
+        throw Invalid_Parameters(dimensions, abstraction_size);
+
+    if ((max_agent_size < 1) || (max_agent_size > 5))
+        throw Invalid_Parameters(max_agent_size);
+
+    if ((obstacle_factor < 0.0) || (obstacle_factor > 100.0))
+        throw Invalid_Parameters(obstacle_factor);
 
     sem_wait(&mutex); {
-        f_file_names.open(file_names);
-        std::string iterator;
-        file_number = 0;
-        while (std::getline(f_file_names, iterator)) {
-            int i = 0;
-            for (; i <= makeshift_name.length(); i++) {
-                if (iterator[i] != makeshift_name[i])
-                    break;
-            }
+        auto new_elem = new Map_Creator_List_Element(new Map_Creator_Worker(dimensions, abstraction_size, obstacle_factor, max_agent_size));
+        new_elem->payload->start();
 
-            if (i == makeshift_name.length() + 1)
-                file_number++;
-        }
-        f_file_names.close();
+        if (head != nullptr)
+            tail->next = new_elem;
+        else
+            head = new_elem;
+        tail = new_elem;
+
+        sem_post(&amount);
     } sem_post(&mutex);
+} /// Create_Map : END
 
-    makeshift_name = makeshift_name + "_" + std::to_string(file_number);
-    sem_wait(&mutex);{
-        out_file.open(file_names, std::ios_base::app);
-        out_file << makeshift_name << '\n';
-        out_file.close();
-    } sem_post(&mutex);
+void* Map_Creator::run() {
 
-    makeshift_name = "../maps/" + makeshift_name + ".txt";
-    out_file.open(makeshift_name);
-    out_file << dimensions << '\n' << abstraction_size << '\n' << max_agent_size << '\n';
-    obstacle_factor /= 100;
-    for (int i = 0; i < dimensions; i++) {
-        for (int j = 0; j < dimensions; j++) {
-            double rand = perlin_noise.octaveNoise(i / 32.0, j / 32.0, 8);
+   while (!end) {
+       sem_wait(&amount);
+       sem_wait(&mutex); {
+           Map_Creator_List_Element* iterator = head;
+           while (iterator != nullptr) {
+               if (iterator->payload->is_Done()) {
+                   auto to_die = iterator->payload;
 
-            if (rand >= obstacle_factor) {
-                if (rand > 0.5)
-                    out_file << '^';
-                else
-                    out_file << '~';
-            } else
-                out_file << '_';
+                   if (iterator->next != nullptr) {
+                       iterator->payload = iterator->next->payload;
+                       iterator->next = iterator->next->next;
+                   }
 
-        } // for : j
+                   delete to_die;
+               } else
+                   iterator = iterator->next;
 
-        out_file << '\n';
-    } // for : i
+           } // while : iterator
+       } sem_post(&mutex);
+   } // while : !end
 
-    out_file.close();
-    return nullptr;
-} /// run : END
+   // Wrap up
+   Map_Creator_List_Element* iterator = head;
+   Map_Creator_List_Element* scout;
+   while (iterator != tail) {
+       scout = iterator->next;
+       delete iterator->payload;
+       delete iterator;
+       iterator = scout;
+   }
+   delete iterator->payload;
+   delete iterator;
+
+   return nullptr;
+} /// Map_Creator_Master : run
+
+Map_Creator::~Map_Creator() {
+    Set_End();
+    while (!is_Done());
+
+    sem_destroy(&mutex);
+    sem_destroy(&amount);
+}

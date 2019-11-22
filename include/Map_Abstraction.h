@@ -1,28 +1,24 @@
 //
-// Created by Igor Duric on 4/20/19.
+// Created by Igor Duric on 4/18/19.
 //
 
-#ifndef PATH_FINDING_MAP_ABSTRACTION_H
-#define PATH_FINDING_MAP_ABSTRACTION_H
+#ifndef PATH_FINDING_MAP_ABSTRACTION_MASTER_H
+#define PATH_FINDING_MAP_ABSTRACTION_MASTER_H
 
-#include "Zone.h"
+#include "Map_Abstraction_Level.h"
+#include "Game_Map.h"
 
-class Map_Abstraction: public Zone {
+class Map_Abstraction {
 public:
-    Map_Abstraction(int x, int y, int level, int capacity) : Zone(x, y, level, capacity) {};
+    explicit Map_Abstraction(int, int = 8);
 
-    bool Find_Path(Cell**, int, Cell**, int) override;
-
-    ~Map_Abstraction() override;
-protected:
-    // Cell** neighbours = nullptr;
-    // int number_of_neighbours = 0;
-    // Cell** contained = nullptr;
-    // Cell*** connections = nullptr;
-    // int* number_of_connections = nullptr;
-    // int number_of_contained = 0;
-
+    void Create_Abstraction(Game_Map*, Traversal_Type&&);
+private:
+    Cell* map_abstractions[2] = { nullptr, nullptr };
+    int dimensions;
+    int hierarchy_size;
+    int abstraction_size;
 };
 
 
-#endif //PATH_FINDING_MAP_ABSTRACTION_H
+#endif //PATH_FINDING_MAP_ABSTRACTION_MASTER_H
