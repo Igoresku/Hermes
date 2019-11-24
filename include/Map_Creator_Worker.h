@@ -14,7 +14,7 @@
 
 class Map_Creator_Worker: public Runnable {
 public:
-    Map_Creator_Worker(int, int, float, int);
+    Map_Creator_Worker(int, int, float, int, sem_t);
 
     ~Map_Creator_Worker() override { while(!is_Done()); };
 protected:
@@ -27,6 +27,7 @@ private:
     int max_agent_size;
     const std::string file_names;
 
+    /// Used for mutual exclusion on the file that contains all map names that exist
     sem_t mutex;
 };
 

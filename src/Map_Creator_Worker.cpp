@@ -4,10 +4,10 @@
 
 #include "../include/Map_Creator_Worker.h"
 
-Map_Creator_Worker::Map_Creator_Worker(int dimensions, int abstraction_size, float obstacle_factor, int max_agent_size)
+Map_Creator_Worker::Map_Creator_Worker(int dimensions, int abstraction_size, float obstacle_factor, int max_agent_size, sem_t mutex)
     : dimensions(dimensions), abstraction_size(abstraction_size), obstacle_factor(obstacle_factor), max_agent_size(max_agent_size),
-    file_names("../maps/file_names.txt") {
-    sem_init(&mutex, 0 , 1);
+    mutex(mutex), file_names("../maps/file_names.txt") {
+    srand (static_cast <unsigned> (time(0)));
 }
 
 void* Map_Creator_Worker::run() {
@@ -16,6 +16,7 @@ void* Map_Creator_Worker::run() {
     std::ofstream out_file;
     std::string makeshift_name = std::to_string(dimensions) + "_" + std::to_string(abstraction_size) + "_"
             + std::to_string(obstacle_factor) + "_" + std::to_string(max_agent_size);
+    float frequency = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 64.0));
 
     f_file_names.open(file_names);
     std::string iterator;
@@ -45,10 +46,10 @@ void* Map_Creator_Worker::run() {
     obstacle_factor /= 100;
     for (int i = 0; i < dimensions; i++) {
         for (int j = 0; j < dimensions; j++) {
-            double rand = perlin_noise.octaveNoise(i / 32.0, j / 32.0, 8);
+            double noise = perlin_noise.octaveNoise(i / frequency, j / frequency, 8);
 
-            if (rand >= obstacle_factor) {
-                if (rand > 0.5)
+            if (noise >= obstacle_factor) {
+                if (noise >= obstacle_factor / 2)
                     out_file << '^';
                 else
                     out_file << '~';
