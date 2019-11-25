@@ -5,20 +5,18 @@
 #ifndef PATH_FINDING_CELL_ABSTRACTION_H
 #define PATH_FINDING_CELL_ABSTRACTION_H
 
-// TODO: Create an Abstract Cell class with all the virtual functions, cleaning up the unnecessary clutter here
 class Cell {
-public: // meta
-    /** Makes the basic cells neighbours to each other */
-    static void Make_Neighbours(Cell* first, Cell* second);
-    /** Makes cells that are actually zones neighbours to each other, and connects them accordingly */
-    static void Make_Neighbours(Cell* first, Cell* second, Cell* connection_1_to_2, Cell* connection_2_to_1);
+public: /// META
     static bool Are_Adjacent(Cell* first, Cell* second);
+    /// Makes the basic Cells neighbours to each other
+    static void Make_Neighbours(Cell* first, Cell* second);
+    /// Makes Cells that are actually zones neighbours to each other, and connects them accordingly
+    static void Make_Neighbours(Cell* first, Cell* second, Cell* connection_1_to_2, Cell* connection_2_to_1);
 public:
-    Cell(int x, int y, int level, int capacity = 0) : x(x), y(y), level(level), capacity(capacity) {};
-    Cell(const Cell& cell) : x(cell.Get_X()),  y(cell.Get_Y()), level(cell.Get_Level()), capacity(cell.Get_Capacity()) {};
+    Cell(const Cell& UoS) : x(UoS.Get_X()),  y(UoS.Get_Y()), level(UoS.Get_Level()), capacity(UoS.Get_Capacity()) {};
     Cell(Cell&&) = delete;
+    Cell(int x, int y, int level, int capacity = 0) : x(x), y(y), level(level), capacity(capacity) {};
 
-    /** Trivial functions **/
     int Get_X() const { return x; };
     int Get_Y() const { return y; };
     int Get_Level() const { return level; };
@@ -27,21 +25,19 @@ public:
     Cell** const Get_Neighbours() const { return neighbours; };
     int Get_Number_Of_Neighbours() const { return number_of_neighbours; };
     void Update_Capacity(int new_capacity) { if (new_capacity > capacity) capacity = new_capacity; };
-    void Set_Container(Cell* cell) { container = cell; };
+    void Set_Container(Cell* Cell) { container = Cell; };
 
-    /** Trivial virtual functions or those that exist simply to be implemented in Zone but callable in Cell **/
     virtual Cell* Adjacent_Vertical(int i, int j) const { return nullptr; };
     virtual Cell* Adjacent_Horizontal(int i, int j) const { return nullptr; };
     virtual Cell** const Get_Connections(Cell* neighbour) const { return nullptr; };
     virtual int Get_Number_Of_Connections(Cell* neighbour) const { return 0; };
-    // TODO: make a public and a private version of removal functions, where private versions skip checking the arguments
     virtual void Add_Connection(Cell* neighbour, Cell* connection) {};
     virtual void Remove_Connection(Cell* neighbour, Cell* connection) {};
-    virtual void Add_Contained(Cell* cell) {};
-    virtual void Remove_Contained(Cell* cell) {};
-    virtual void Add_Neighbour(Cell* cell);
-    virtual void Remove_Neighbour(Cell* cell);
-
+    virtual void Add_Contained(Cell* Cell) {};
+    virtual void Remove_Contained(Cell* Cell) {};
+    virtual void Add_Neighbour(Cell* Cell);
+    virtual void Remove_Neighbour(Cell* Cell);
+    
     /** Check if all contained cells inside a zone are connected to each other:
      * subzones - collections of connected cells inside the zone
      * number_of_subzones_elements - number of cells in each of the subzones
@@ -59,16 +55,14 @@ public:
      * the arrays, Wipe_Clean prevents this */
     virtual void Wipe_Clean();
     /*** */
-    virtual bool Find_Path(Cell** starting_positions, int number_1, Cell** ending_positions, int number_2) { return true; };
+    virtual bool Find_Path(Cell** starting_positions, int size_1, Cell** destination_positions, int size_2) { return true; };
 
     virtual ~Cell();
 protected:
-    /** All neighbours to this cell and the number of them */
     Cell** neighbours = nullptr;
     int number_of_neighbours = 0;
     Cell* container = nullptr;
 private:
-    /** Trivial information about the cell */
     const int x;
     const int y;
     const int level;

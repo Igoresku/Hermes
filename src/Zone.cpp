@@ -4,8 +4,6 @@
 
 #include "../include/Zone.h"
 
-const int Zone::CHUNK = 10;
-
 Cell* Zone::Adjacent_Vertical(int i, int j) const {
     for (int m = 0; m < number_of_contained; m++)
         if ((contained[m]->Get_X() == i - 1) && (contained[m]->Get_Y() == j))
@@ -98,9 +96,9 @@ void Zone::Remove_Connection(Cell* neighbour, Cell* connection) {
 } /// Remove_Connection : END
 
 void Zone::Add_Contained(Cell* cell) {
-    if (number_of_contained % CHUNK == 0) {
-        auto replace_array = new Cell*[number_of_contained + CHUNK];
-        for (int i = 0; i < number_of_contained + CHUNK; i++) {
+    if (number_of_contained % ZONE_ALLOCATION_CHUNK == 0) {
+        auto replace_array = new Cell*[number_of_contained + ZONE_ALLOCATION_CHUNK];
+        for (int i = 0; i < number_of_contained + ZONE_ALLOCATION_CHUNK; i++) {
             replace_array[i] = (i < number_of_contained) ? contained[i] : nullptr;
             contained[i] = nullptr;
         }
@@ -125,7 +123,7 @@ void Zone::Remove_Contained(Cell* cell) {
     contained[number_of_contained - 1] = nullptr;
     number_of_contained -= 1;
 
-    if (number_of_contained % CHUNK == 0) {
+    if (number_of_contained % ZONE_ALLOCATION_CHUNK == 0) {
         auto replace_contained = new Cell*[number_of_contained];
         for (int j = 0; j < number_of_contained; j++) {
             replace_contained[j] = contained[j];
@@ -237,7 +235,7 @@ bool Zone::Fragment(Cell***& subzones, int*& number_of_subzones_elements, int& n
         delete[] number_of_subzones_elements;
         subzones = replace_subzones;
         number_of_subzones_elements = replace_number_of_subzones_elements;
-        subzones[number_of_subzones] = new Cell*[CHUNK];
+        subzones[number_of_subzones] = new Cell*[ZONE_ALLOCATION_CHUNK];
         number_of_subzones_elements[number_of_subzones] = 0;
 
         subzones[number_of_subzones][0] = head_contained_copy->payload;
@@ -275,8 +273,8 @@ bool Zone::Fragment(Cell***& subzones, int*& number_of_subzones_elements, int& n
                     for (auto iterator = head_contained_copy; iterator != nullptr; iterator = iterator->next) {
                         if (neighbours[i] == iterator->payload) {
 
-                            if (number_of_subzones_elements[number_of_subzones] % CHUNK == 0) {
-                                auto replace_subzone = new Cell*[number_of_subzones_elements[number_of_subzones] + CHUNK];
+                            if (number_of_subzones_elements[number_of_subzones] % ZONE_ALLOCATION_CHUNK == 0) {
+                                auto replace_subzone = new Cell*[number_of_subzones_elements[number_of_subzones] + ZONE_ALLOCATION_CHUNK];
 
                                 for (int l = 0; l < number_of_subzones_elements[number_of_subzones]; l++) {
                                     replace_subzone[l] = subzones[number_of_subzones][l];
@@ -425,7 +423,7 @@ void Zone::Wipe_Clean() {
     delete[] contained;
 } /// Wipe_Clean : END
 
-bool Zone::Find_Path(Cell** starting_positions, int first_array_size, Cell** destination_positions, int second_array_size) {
+bool Zone::Find_Path(Cell** starting_positions, int size_1, Cell** destination_positions, int size_2) {
 
 } /// Find_Path : END
 

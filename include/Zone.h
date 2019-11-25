@@ -7,9 +7,10 @@
 
 #include "Cell.h"
 
+#define ZONE_ALLOCATION_CHUNK 10
+
 class Zone : public Cell {
-private: // meta
-    /** Nested trivial list element used inside Fragment function */
+private: /// META
     class Zone_List_Element {
     public:
         explicit Zone_List_Element(Cell* payload, Zone_List_Element* next = nullptr): payload(payload), next(next) {};
@@ -46,13 +47,11 @@ protected:
      * to neighbours are also contained cells */
     Cell*** connections = nullptr;
     int* number_of_connections = nullptr;
-    /// All the cells that are contained inside the zone and their number
+
     Cell** contained = nullptr;
     int number_of_contained = 0;
 private:
-    /// Allocation chunk, made simply for better control of the code, default value is 10 for no particular reason
-    static const int CHUNK;
-    /// Was this zone created normally or through fragmentation */
+    /// Was this zone created normally or through fragmentation?
     bool fragmented;
 };
 

@@ -2,8 +2,8 @@
 // Created by Igor Duric on 4/18/19.
 //
 
-#ifndef PATH_FINDING_MAP_ABSTRACTION_MASTER_H
-#define PATH_FINDING_MAP_ABSTRACTION_MASTER_H
+#ifndef PATH_FINDING_MAP_ABSTRACTION_H
+#define PATH_FINDING_MAP_ABSTRACTION_H
 
 #include "Map_Abstraction_Level.h"
 #include "Game_Map.h"
@@ -21,4 +21,4 @@ private:
 };
 
 
-#endif //PATH_FINDING_MAP_ABSTRACTION_MASTER_H
+#endif //PATH_FINDING_MAP_ABSTRACTION_H

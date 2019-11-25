@@ -4,6 +4,12 @@
 
 #include "../include/Cell.h"
 
+bool Cell::Are_Adjacent(Cell* first, Cell* second) {
+    bool adjacent_x = ((first->Get_X() - second->Get_X()) == 1) || ((first->Get_X() - second->Get_X()) == -1);
+    bool adjacent_y = ((first->Get_Y() - second->Get_Y()) == 1) || ((first->Get_Y() - second->Get_Y()) == -1);
+    return adjacent_x && adjacent_y;
+} /// Are_Adjacent : END
+
 void Cell::Make_Neighbours(Cell* first, Cell* second) {
     first->Add_Neighbour(second);
     second->Add_Neighbour(first);
@@ -14,12 +20,6 @@ void Cell::Make_Neighbours(Cell* first, Cell* second, Cell* connection_1_to_2, C
     first->Add_Connection(second, connection_1_to_2);
     second->Add_Connection(first, connection_2_to_1);
 } /// Make_Neighbours : END
-
-bool Cell::Are_Adjacent(Cell* first, Cell* second) {
-    bool adjacent_x = ((first->Get_X() - second->Get_X()) == 1) || ((first->Get_X() - second->Get_X()) == -1);
-    bool adjacent_y = ((first->Get_Y() - second->Get_Y()) == 1) || ((first->Get_Y() - second->Get_Y()) == -1);
-    return adjacent_x && adjacent_y;
-} /// Are_Adjacent : END
 
 void Cell::Add_Neighbour(Cell* cell) {
     for (int i = 0; i < number_of_neighbours; i++)
@@ -73,4 +73,4 @@ void Cell::Wipe_Clean() {
 
 Cell::~Cell() {
     delete[] neighbours;
-} /// ~Cell : END
+}
