@@ -6,7 +6,7 @@
 #define PATH_FINDING_AGENT_H
 
 #include <iostream>
-#include "Traversal_Type.h"
+#include "Terrain.h"
 
 class Agent {
 public:

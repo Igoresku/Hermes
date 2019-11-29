@@ -4,47 +4,56 @@
 
 #include "../include/Map_Creator.h"
 
-Map_Creator* Map_Creator::instance = nullptr;
-
-Map_Creator* Map_Creator::Get_Instance() {
-    if (instance != nullptr)
-        instance = new Map_Creator();
-
-    return instance;
-} /// Get_Instance : END
-
-Map_Creator::Map_Creator(int worker_amount) : worker_amount(worker_amount) {
-    job_queue = new Job_Queue();
-
-    workers = new Worker*[worker_amount];
-    for (int i = 0; i < worker_amount; i++) {
-        workers[i] = new Worker(job_queue);
-        workers[i]->start();
-    }
+Map_Creator::Map_Creator(int worker_amount) : Employer(worker_amount) {
+    abstraction_sizes = new int[4];
+    abstraction_sizes[0] = 16;
+    abstraction_sizes[1] = 12;
+    abstraction_sizes[2] = 8;
+    abstraction_sizes[3] = 4;
 
     pthread_mutex_init(&job_file_mutex, nullptr);
 } /// Map_Creator : END
 
-void Map_Creator::Create_Map(int dimensions, int abstraction_size, float obstacle_factor, int max_agent_size) {
+void Map_Creator::Create_Map(int dimensions, double obstacle_factor, double water_cliff_factor) {
+    int fitting_abstraction_size = 0;
 
-    if ((dimensions % abstraction_size) || (dimensions < 0) || (abstraction_size < 0))
-        throw Invalid_Parameters(dimensions, abstraction_size);
+    for (int i = 0; i < 4; i++) {
+        int curr = abstraction_sizes[i];
+        while (curr < dimensions)
+            curr *= abstraction_sizes[i];
 
-    if ((max_agent_size < 1) || (max_agent_size > 4))
-        throw Invalid_Parameters(max_agent_size);
+        if (curr == dimensions) {
+            fitting_abstraction_size = abstraction_sizes[i];
+            break;
+        }
+    } // for : i
 
-    if ((obstacle_factor < 0.0) || (obstacle_factor > 100.0))
+    if ((dimensions < 0) || (fitting_abstraction_size == 0))
+        throw Invalid_Parameters(dimensions);
+
+    if ((obstacle_factor < 0.0) || (obstacle_factor > 100.0) || (water_cliff_factor < 0.0) || (water_cliff_factor > 100.0))
         throw Invalid_Parameters(obstacle_factor);
 
-    job_queue->Add_Job(new Map_Creation_Job(dimensions, abstraction_size, obstacle_factor, max_agent_size, job_file_mutex));
+    Add_Job(new Map_Creation_Job(dimensions, obstacle_factor, water_cliff_factor, job_file_mutex));
 } /// Create_Map : END
 
-Map_Creator::~Map_Creator() {
-    delete job_queue;
+void Map_Creator::List_Maps() {
+    std::ifstream f_file_names;
 
-    for (int i = 0; i < worker_amount; i++)
-        delete workers[i];
-    delete[] workers;
+    {
+        RAII scoped_key(&job_file_mutex);
+
+        f_file_names.open("../maps/all_maps.txt");
+        std::string iterator;
+        while (std::getline(f_file_names, iterator))
+            std::cout << iterator << '\n';
+
+        f_file_names.close();
+    }
+} /// List_Maps : END
+
+Map_Creator::~Map_Creator() {
+    delete[] abstraction_sizes;
 
     pthread_mutex_destroy(&job_file_mutex);
 } /// ~Map_Creator : END

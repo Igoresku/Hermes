@@ -5,39 +5,29 @@
 #ifndef PATH_FINDING_MAP_CREATOR_MASTER_H
 #define PATH_FINDING_MAP_CREATOR_MASTER_H
 
-#include "Worker.h"
+#include "Employer.h"
 #include "Map_Creation_Job.h"
 #include "Invalid_Parameters.h"
 
-#define MAX_MC_WORKERS_ALLOWED 2
-
-class Map_Creator {
-public: /// META
-    static Map_Creator* Get_Instance();
-
-private: /// META
-    static Map_Creator* instance;
-
+class Map_Creator : public Employer{
 public:
+    explicit Map_Creator(int = 1);
+
     Map_Creator(const Map_Creator&) = delete;
     Map_Creator(Map_Creator&&) = delete;
 
     /** Request for the random map to be created with given parameters:
-     * dimensions - how big is a single side of the map, ought be a power of abstraction_size
-     * abstraction_size - a logarithm of dimensions, determines the size of abstraction chunk
-     * obstacle_factor - rough estimation of how much of the terrain percent will be impassable in a certain way
-     * max_agent_size - max rectangular size allowed for an agent on this map
+     * dimensions - how big is a single side of the map, ought be a power of 4, 8, 12 or 16
+     * obstacle_factor - rough estimation of how much of the terrain will be impassable, [0.0, 100.0]
+     * water_cliff_factor - rough estimation of how much of impassable terrain is water/cliff, [0.0, 100.0]
      * RESULT: NONE */
-    void Create_Map(int dimensions, int abstraction_size, float obstacle_factor, int max_agent_size) noexcept(false);
+    void Create_Map(int dimensions, double obstacle_factor, double water_cliff_factor) noexcept(false);
+    void List_Maps();
+    std::ofstream Choose_Map(std::string);
 
-    ~Map_Creator();
-protected:
-    explicit Map_Creator(int = MAX_MC_WORKERS_ALLOWED);
-
+    ~Map_Creator() override;
 private:
-    Worker** workers;
-    int worker_amount;
-    Job_Queue* job_queue;
+    int* abstraction_sizes;
 
     pthread_mutex_t job_file_mutex;
 };

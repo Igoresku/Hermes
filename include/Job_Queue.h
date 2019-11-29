@@ -29,7 +29,6 @@ private:
     Job_List_Element* head = nullptr;
     Job_List_Element* tail = nullptr;
 
-    // TODO: check the implementation of sem_t on MAC_OS since it seems that it doesn't work
     pthread_mutex_t mutex;
     pthread_cond_t not_empty;
 };

@@ -12,21 +12,20 @@
 #include "Job.h"
 #include "RAII.h"
 #include "../../../Git/PerlinNoise/PerlinNoise.hpp"
+#include "Terrain.h"
 
 
 class Map_Creation_Job : public Job {
 public:
-    Map_Creation_Job(int, int, float, int, pthread_mutex_t&);
+    Map_Creation_Job(int, double, double, pthread_mutex_t&);
 
     void Do_Job() override;
 
     ~Map_Creation_Job() override;
 private:
     int dimensions;
-    int abstraction_size;
-    float obstacle_factor;
-    int max_agent_size;
-    const std::string file_names;
+    double obstacle_factor;
+    double water_cliff_factor;
 
     pthread_mutex_t mutex;
 };

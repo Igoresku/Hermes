@@ -6,10 +6,11 @@
 #define PATH_FINDING_RUNNABLE_H
 
 #include <pthread.h>
+#include "RAII.h"
 #include "Perform_When_Done.h"
 
 class Runnable {
-private: // Meta
+private: /// META
     static void* Stub(void*);
 
     class PwD_List {
@@ -19,15 +20,18 @@ private: // Meta
         PwD_List* next;
     };
 public:
-    Runnable() = default;
+    Runnable();
 
     void start();
+    void join(void* = nullptr);
+    void detach();
+    void exit(void* = nullptr);
 
     bool is_Done() const { return done; }
     pthread_t Get_Handler() const { return handler; }
     void Add_PwD(Perform_When_Done*);
 
-    virtual ~Runnable() = 0;
+    virtual ~Runnable();
 protected:
     virtual void* run() = 0;
 
@@ -39,6 +43,8 @@ private:
     void Perform_Waiting_PwD();
     PwD_List* head = nullptr;
     PwD_List* tail = nullptr;
+
+    pthread_mutex_t pwd_mutex;
 };
 
 #endif //PATH_FINDING_RUNNABLE_H

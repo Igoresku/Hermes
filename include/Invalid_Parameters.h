@@ -10,15 +10,14 @@
 
 class Invalid_Parameters: public std::exception {
 public:
-    Invalid_Parameters(int, int);
     explicit Invalid_Parameters(int);
-    explicit Invalid_Parameters(float);
+    explicit Invalid_Parameters(double);
 
     const char* what() const noexcept override {
         return message;
     }
 
-    ~Invalid_Parameters() override { delete[] message; }
+    ~Invalid_Parameters() override;
 private:
     char* message;
 };

@@ -6,7 +6,7 @@
 #define PATH_FINDING_GAME_MAP_H
 
 #include <cstdint>
-#include "Traversal_Type.h"
+#include "Terrain.h"
 
 class Game_Map {
 public:
