@@ -11,8 +11,8 @@
 #include <string>
 #include "Job.h"
 #include "RAII.h"
-#include "../../../Git/PerlinNoise/PerlinNoise.hpp"
 #include "Terrain.h"
+#include "../../../Git/PerlinNoise/PerlinNoise.hpp"
 
 
 class Map_Creation_Job : public Job {

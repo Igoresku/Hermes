@@ -15,7 +15,7 @@ void Map_Creation_Job::Do_Job() {
     std::string makeshift_name = std::to_string(dimensions) + "_"
             + std::to_string(obstacle_factor) + "_" + std::to_string(water_cliff_factor);
 
-    // TODO: rework this to a C++11 standard random engine
+    // TODO: rework this to a C++ standard random engine
     srand (static_cast <unsigned> (time(0)));
     float frequency = static_cast <float> (rand()) / (static_cast <float> (RAND_MAX / 64.0));
 
