@@ -8,6 +8,7 @@
 #include <exception>
 #include <string>
 
+/** Thrown by Map_Creator::Create_Map when its arguments are invalid. */
 class Invalid_Parameters: public std::exception {
 public:
     explicit Invalid_Parameters(int);

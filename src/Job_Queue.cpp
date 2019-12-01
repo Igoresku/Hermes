@@ -18,6 +18,7 @@ void Job_Queue::Add_Job(Job* job) {
     else
         tail->next = new_job;
     tail = new_job;
+
     pthread_cond_broadcast(&not_empty);
 } /// Add_Job : END
 
@@ -27,7 +28,7 @@ Job* Job_Queue::Get_Job() {
     while (head == nullptr)
         pthread_cond_wait(&not_empty, &mutex);
 
-    Job* job = head->payload;
+    auto job = head->payload;
     auto temp = head;
     head = head->next;
     if (head == nullptr)

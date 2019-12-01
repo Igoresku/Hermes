@@ -6,15 +6,14 @@
 #define PATH_FINDING_LAST_WORDS_H
 
 /** Classes that extend this class implement a method that
- * thread is meant to perform when it it is finished */
+ * thread is meant to call when it it is finished */
 class Perform_When_Done {
 public:
-    Perform_When_Done() = default;
+    Perform_When_Done();
 
     virtual void Perform_Action() = 0;
 
-    // This should be = 0 (abstract), but wouldn't be compiled as such
-    virtual ~Perform_When_Done();
+    virtual ~Perform_When_Done() = 0;
 };
 
 

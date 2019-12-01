@@ -9,6 +9,7 @@
 
 #define ZONE_ALLOCATION_CHUNK 10
 
+/** Cell that contains other cells, represents a single point of abstracted map */
 class Zone : public Cell {
 private: /// META
     class Zone_List_Element {

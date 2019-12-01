@@ -8,6 +8,8 @@
 #include <iostream>
 #include "Terrain.h"
 
+/** Agent represents a unit that is placed and moves on the map,
+ * it is represented by its size(?) and terrain it can traverse */
 class Agent {
 public:
     Agent(int size, Traversal_Type traversal_type, int x, int y) : size(size), traversal_type(traversal_type), x(x), y(y) {};

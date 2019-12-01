@@ -9,6 +9,8 @@
 #include "Job.h"
 #include "Job_Queue.h"
 
+/** Worker from a work crew, takes jobs from its job_queue
+ * and performs them as long as its not stopped  */
 class Worker : public Runnable {
 public:
     explicit Worker(Job_Queue*);

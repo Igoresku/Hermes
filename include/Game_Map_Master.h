@@ -12,7 +12,6 @@
 #include "Agent.h"
 #include "Map_Abstraction.h"
 #include "Nonexistent_File.h"
-#include "Invalid_File_Format.h"
 
 class Game_Map_Master : public Runnable {
 public: // meta

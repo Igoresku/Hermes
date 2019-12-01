@@ -5,6 +5,8 @@
 #ifndef PATH_FINDING_CELL_ABSTRACTION_H
 #define PATH_FINDING_CELL_ABSTRACTION_H
 
+/** Cell represents a single point of a (real) map, it fulfills a role in
+ * "Composite" pattern, where a Zone class can contain a number of Cells */
 class Cell {
 public: /// META
     static bool Are_Adjacent(Cell* first, Cell* second);

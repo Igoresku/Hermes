@@ -8,6 +8,7 @@
 #include <exception>
 #include <string>
 
+// TODO: add documentation
 class Invalid_File_Format: public std::exception {
 public:
     Invalid_File_Format(int, int);

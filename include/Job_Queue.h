@@ -9,6 +9,8 @@
 #include "Job.h"
 #include "RAII.h"
 
+/** Contains jobs of specific type for a set of workers
+ * under guidance of an employer. */
 class Job_Queue {
 private: /// META
     class Job_List_Element {

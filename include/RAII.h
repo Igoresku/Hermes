@@ -8,6 +8,7 @@
 #include <pthread.h>
 
 /// Resource Acquisition Is Initialization
+/** Enables RAII type of locks and safety associated with them */
 class RAII {
 public:
     explicit RAII(pthread_mutex_t*);

@@ -9,6 +9,7 @@
 #include "RAII.h"
 #include "Perform_When_Done.h"
 
+/** Java-style Runnable implemented with PThreads */
 class Runnable {
 private: /// META
     static void* Stub(void*);
@@ -23,8 +24,8 @@ public:
     Runnable();
 
     void start();
-    void join(void* = nullptr);
     void detach();
+    void join(void* = nullptr);
     void exit(void* = nullptr);
 
     bool is_Done() const { return done; }

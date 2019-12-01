@@ -4,6 +4,6 @@
 
 #include "../include/Job.h"
 
-Job::Job(Result_Container* result_container) : result_container(result_container) {};
+Job::Job(Result_Queue* result_queue) : result_queue(result_queue) {};
 
 Job::~Job() = default;

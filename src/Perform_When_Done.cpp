@@ -4,4 +4,6 @@
 
 #include "../include/Perform_When_Done.h"
 
+Perform_When_Done::Perform_When_Done() = default;
+
 Perform_When_Done::~Perform_When_Done() = default;
