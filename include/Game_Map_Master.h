@@ -8,23 +8,20 @@
 #include <fstream>
 #include <cstdint>
 #include "Runnable.h"
+#include "Employer.h"
 #include "Game_Map.h"
 #include "Agent.h"
 #include "Map_Abstraction.h"
 #include "Nonexistent_File.h"
 
-class Game_Map_Master : public Runnable {
-public: // meta
-    static Game_Map_Master* Factory(std::string) noexcept(false);
+class Game_Map_Master : public Employer {
 public:
-    void Add_Agent(int, Traversal_Type, int, int);
-    void List_All_Agents();
 
     ~Game_Map_Master() override = default;
 protected:
     Game_Map_Master(int, int, int, uint8_t**);
 
-    void* run() override;
+
 
 private:
     int dimensions;

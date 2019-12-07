@@ -4,7 +4,7 @@
 
 #include "../include/Game_Map.h"
 
-Game_Map::Game_Map(uint8_t** raw_map, int dimensions, int max_agent_size, Traversal_Type traversal_type) {
+Game_Map::Game_Map(int worker_amount) : Employer(worker_amount) {
     map = new uint8_t*[dimensions / 4];
     for (int i = 0; i < dimensions / 4; i++)
         map[i] = new uint8_t[dimensions / 4];

@@ -27,7 +27,7 @@ public:
 protected:
     void Add_Job(Job*);
 private:
-    void Initialize_Workers();
+    virtual void Initialize_Workers();
 
     Worker** workers;
     int worker_amount;

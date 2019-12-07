@@ -8,6 +8,7 @@ Worker::Worker(Job_Queue* job_queue) : job_queue(job_queue) {}
 
 void* Worker::run() {
     while (!stop) {
+        cancellation_point();
         job = job_queue->Get_Job();
         job->Do_Job();
         delete job;

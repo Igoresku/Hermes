@@ -7,14 +7,11 @@
 void* Runnable::Stub(void* me) {
     auto runnable = (Runnable*) me;
     void* res = runnable->run();
-    runnable->Perform_Waiting_PwD();
     runnable->set_Done();
     return res;
 } /// Stub : END
 
-Runnable::Runnable() {
-    pthread_mutex_init(&pwd_mutex, nullptr);
-}
+Runnable::Runnable() = default;
 
 void Runnable::start() {
     pthread_create(&handler, nullptr, Runnable::Stub, (void*) this);
@@ -28,42 +25,24 @@ void Runnable::detach() {
     pthread_detach(handler);
 } /// detach : END
 
+void Runnable::cancel() {
+    pthread_cancel(handler);
+} /// cancel : END
+
+void Runnable::disable_cancel() {
+    pthread_setcancelstate(PTHREAD_CANCEL_DISABLE, &state);
+} /// set_uncancelable : END
+
+void Runnable::enable_cancel() {
+    pthread_setcancelstate(state, &state);
+} /// set_cancelable : END
+
+void Runnable::cancellation_point() {
+    pthread_testcancel();
+} /// detach : END
+
 void Runnable::exit(void* result) {
     pthread_exit(result);
-}
+} /// exit : END
 
-void Runnable::Add_PwD(Perform_When_Done* pwd) {
-    RAII raii(&pwd_mutex);
-
-    if (done)
-        return;
-
-    auto new_waiting = new PwD_List(pwd);
-    if (head == nullptr)
-        head = new_waiting;
-    else
-        tail->next = new_waiting;
-    tail = new_waiting;
-} /// Add_Waiting_Signal : END
-
-void Runnable::Perform_Waiting_PwD() {
-    auto iterator = head;
-    PwD_List* scout;
-
-    while (iterator != tail) {
-        scout = iterator->next;
-        iterator->payload->Perform_Action();
-        delete iterator->payload;
-        delete iterator;
-        iterator = scout;
-    }
-    if (iterator != nullptr) {
-        iterator->payload->Perform_Action();
-        delete iterator->payload;
-        delete iterator;
-    }
-} /// Signal_Waiting : END
-
-Runnable::~Runnable() {
-    pthread_mutex_destroy(&pwd_mutex);
-};
+Runnable::~Runnable() = default;

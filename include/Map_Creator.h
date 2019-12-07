@@ -9,7 +9,7 @@
 #include "Map_Creation_Job.h"
 #include "Invalid_Parameters.h"
 
-class Map_Creator : public Employer{
+class Map_Creator : public Employer {
 public:
     explicit Map_Creator(int = 1);
 
@@ -23,7 +23,7 @@ public:
      * RESULT: NONE */
     void Create_Map(int dimensions, double obstacle_factor, double water_cliff_factor) noexcept(false);
     void List_Maps();
-    std::ofstream Choose_Map(std::string);
+    // std::ofstream Choose_Map(std::string);
 
     ~Map_Creator() override;
 private:

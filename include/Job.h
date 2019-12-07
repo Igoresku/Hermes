@@ -5,18 +5,17 @@
 #ifndef PATH_FINDING_JOB_H
 #define PATH_FINDING_JOB_H
 
-#include "Result_Queue.h"
+#include "Product.h"
 
-/** */
+/** A task to be performed, inherit from this class to define a job
+ * that can be placed in a queue and performed by some worker(?) thread */
 class Job {
 public:
-    explicit Job(Result_Queue* = nullptr);
+    Job();
 
     virtual void Do_Job() = 0;
 
     virtual ~Job();
-protected:
-    Result_Queue* result_queue;
 };
 
 
